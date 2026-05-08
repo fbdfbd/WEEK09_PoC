@@ -1,0 +1,62 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c53bbfd88eb17994fb51828fa98407bf, type: 3}
+  m_Name: Dialogue_Evening_003
+  m_EditorClassIdentifier: Assembly-CSharp::App.Gameplay.Definitions.DialogueDefinition
+  _id: evening_week_03
+  _priority: 100
+  _title: Week 3 Evening
+  _conditions:
+    _requiredFlags: []
+    _blockedFlags: []
+    _statRequirements: []
+    _environmentRequirements: []
+  _firstNodeId: start
+  _nodes:
+  - _id: start
+    _speaker: Student
+    _body: Sample evening 3.
+    _choices:
+    - _label: Stabilize
+      _effects:
+      - _type: 2
+        _targetId: stability_path
+        _statType: 0
+        _value: 0
+        _title: 
+        _body: 
+      - _type: 0
+        _targetId: 
+        _statType: 0
+        _value: 10
+        _title: 
+        _body: 
+      _nextNodeId: end
+    - _label: Expose control
+      _effects:
+      - _type: 2
+        _targetId: awareness_path
+        _statType: 0
+        _value: 0
+        _title: 
+        _body: 
+      - _type: 0
+        _targetId: 
+        _statType: 3
+        _value: 10
+        _title: 
+        _body: 
+      _nextNodeId: end
+  - _id: end
+    _speaker: Student
+    _body: Week 3 evening complete.
+    _choices: []

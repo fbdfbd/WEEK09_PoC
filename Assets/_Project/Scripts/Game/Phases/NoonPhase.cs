@@ -1,4 +1,3 @@
-using System.Linq;
 using App.Gameplay.Conditions;
 using App.Gameplay.Definitions;
 using App.Gameplay.Effects;
@@ -9,16 +8,16 @@ namespace App.Gameplay.Phases
 {
     public sealed class NoonPhase
     {
-        private readonly ConditionEvaluator _conditionEvaluator;
+        private readonly ContentSelector _contentSelector;
         private readonly EffectProcessor _effectProcessor;
         private readonly GameRuntimeState _runtimeState;
 
         public NoonPhase(
-            ConditionEvaluator conditionEvaluator,
+            ContentSelector contentSelector,
             EffectProcessor effectProcessor,
             GameRuntimeState runtimeState)
         {
-            _conditionEvaluator = conditionEvaluator;
+            _contentSelector = contentSelector;
             _effectProcessor = effectProcessor;
             _runtimeState = runtimeState;
         }
@@ -27,21 +26,17 @@ namespace App.Gameplay.Phases
 
         public NoonActionDefinition Enter(WeekDefinition week)
         {
-            CurrentAction = week?.NoonActions?
-                .Where(action => action != null && _conditionEvaluator.IsMet(action.Conditions, _runtimeState))
-                .OrderByDescending(action => action.Priority)
-                .FirstOrDefault();
+            CurrentAction = _contentSelector.SelectHighestPriority(
+                week?.NoonActions,
+                action => action.Conditions,
+                action => action.Priority);
 
             if (CurrentAction == null)
             {
                 return null;
             }
 
-            foreach (var effect in CurrentAction.Effects ?? System.Array.Empty<EffectDefinition>())
-            {
-                _effectProcessor.Apply(effect, _runtimeState);
-            }
-
+            _effectProcessor.ApplyAll(CurrentAction.Effects, _runtimeState);
             _runtimeState.AddReport(new ReportEntry(
                 _runtimeState.CurrentWeekIndex,
                 CurrentAction.Title,

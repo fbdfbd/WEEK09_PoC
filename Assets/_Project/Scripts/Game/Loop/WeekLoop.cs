@@ -10,6 +10,7 @@ namespace App.Gameplay.Loop
     {
         private readonly IDataRegistry _dataRegistry;
         private readonly GameRuntimeState _runtimeState;
+        private readonly IntroPhase _introPhase;
         private readonly MorningPhase _morningPhase;
         private readonly NoonPhase _noonPhase;
         private readonly EveningPhase _eveningPhase;
@@ -18,6 +19,7 @@ namespace App.Gameplay.Loop
         public WeekLoop(
             IDataRegistry dataRegistry,
             GameRuntimeState runtimeState,
+            IntroPhase introPhase,
             MorningPhase morningPhase,
             NoonPhase noonPhase,
             EveningPhase eveningPhase,
@@ -25,15 +27,38 @@ namespace App.Gameplay.Loop
         {
             _dataRegistry = dataRegistry;
             _runtimeState = runtimeState;
+            _introPhase = introPhase;
             _morningPhase = morningPhase;
             _noonPhase = noonPhase;
             _eveningPhase = eveningPhase;
             _endingResolver = endingResolver;
         }
 
-        public GamePhaseType CurrentPhase { get; private set; } = GamePhaseType.Morning;
+        public GamePhaseType CurrentPhase { get; private set; } = GamePhaseType.Intro;
         public WeekDefinition CurrentWeek { get; private set; }
         public EndingDefinition CurrentEnding { get; private set; }
+
+        public DialogueNodeDefinition StartOrEnterIntro()
+        {
+            if (_runtimeState.HasCompletedIntro)
+            {
+                return null;
+            }
+
+            CurrentPhase = GamePhaseType.Intro;
+            return _introPhase.Enter();
+        }
+
+        public PhaseResult SelectIntroChoice(int choiceIndex)
+        {
+            return _introPhase.SelectChoice(choiceIndex);
+        }
+
+        public MorningIssueDefinition CompleteIntroAndEnterFirstMorning()
+        {
+            _runtimeState.MarkIntroCompleted();
+            return StartOrEnterMorning();
+        }
 
         public MorningIssueDefinition StartOrEnterMorning()
         {
@@ -68,6 +93,9 @@ namespace App.Gameplay.Loop
         {
             return _eveningPhase.SelectChoice(choiceIndex);
         }
+
+        public bool IsIntroCompleted => _introPhase.IsCompleted;
+        public bool IsEveningCompleted => _eveningPhase.IsCompleted;
 
         public MorningIssueDefinition CompleteWeekAndEnterNextMorning()
         {

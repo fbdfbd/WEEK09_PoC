@@ -1,0 +1,153 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c53bbfd88eb17994fb51828fa98407bf, type: 3}
+  m_Name: Dialogue_Intro
+  m_EditorClassIdentifier: Assembly-CSharp::App.Gameplay.Definitions.DialogueDefinition
+  _id: dialogue_intro
+  _priority: 100
+  _title: Intro
+  _conditions:
+    _requiredFlags: []
+    _blockedFlags: []
+    _statRequirements: []
+    _environmentRequirements: []
+  _firstNodeId: start
+  _nodes:
+  - _id: start
+    _speaker: Guide
+    _body: Start node. Choose one branch.
+    _choices:
+    - _label: Go to careful branch
+      _effects:
+      - _type: 2
+        _targetId: intro_careful
+        _statType: 0
+        _value: 0
+        _title: 
+        _body: 
+      - _type: 0
+        _targetId: 
+        _statType: 2
+        _value: 5
+        _title: 
+        _body: 
+      _nextNodeId: careful_branch
+    - _label: Go to bold branch
+      _effects:
+      - _type: 2
+        _targetId: intro_bold
+        _statType: 0
+        _value: 0
+        _title: 
+        _body: 
+      - _type: 0
+        _targetId: 
+        _statType: 1
+        _value: 5
+        _title: 
+        _body: 
+      _nextNodeId: bold_branch
+  - _id: careful_branch
+    _speaker: Guide
+    _body: Careful branch node. This came from the first choice.
+    _choices:
+    - _label: Merge to shared node
+      _effects:
+      - _type: 2
+        _targetId: intro_saw_careful_branch
+        _statType: 0
+        _value: 0
+        _title: 
+        _body: 
+      _nextNodeId: shared_question
+    - _label: End directly
+      _effects:
+      - _type: 2
+        _targetId: intro_careful_direct_end
+        _statType: 0
+        _value: 0
+        _title: 
+        _body: 
+      _nextNodeId: end
+  - _id: bold_branch
+    _speaker: Guide
+    _body: Bold branch node. This came from the second choice.
+    _choices:
+    - _label: Merge to shared node
+      _effects:
+      - _type: 2
+        _targetId: intro_saw_bold_branch
+        _statType: 0
+        _value: 0
+        _title: 
+        _body: 
+      _nextNodeId: shared_question
+    - _label: End directly
+      _effects:
+      - _type: 2
+        _targetId: intro_bold_direct_end
+        _statType: 0
+        _value: 0
+        _title: 
+        _body: 
+      _nextNodeId: end
+  - _id: shared_question
+    _speaker: Guide
+    _body: Shared node. Both branches can arrive here.
+    _choices:
+    - _label: Choose trust sample
+      _effects:
+      - _type: 2
+        _targetId: intro_shared_trust
+        _statType: 0
+        _value: 0
+        _title: 
+        _body: 
+      - _type: 0
+        _targetId: 
+        _statType: 2
+        _value: 3
+        _title: 
+        _body: 
+      _nextNodeId: final_note
+    - _label: Choose autonomy sample
+      _effects:
+      - _type: 2
+        _targetId: intro_shared_autonomy
+        _statType: 0
+        _value: 0
+        _title: 
+        _body: 
+      - _type: 0
+        _targetId: 
+        _statType: 1
+        _value: 3
+        _title: 
+        _body: 
+      _nextNodeId: final_note
+  - _id: final_note
+    _speaker: Guide
+    _body: Final note node. One more click finishes the intro.
+    _choices:
+    - _label: Finish intro
+      _effects:
+      - _type: 2
+        _targetId: intro_finished_by_choice
+        _statType: 0
+        _value: 0
+        _title: 
+        _body: 
+      _nextNodeId: end
+  - _id: end
+    _speaker: Guide
+    _body: End node. Empty choices means dialogue complete.
+    _choices: []

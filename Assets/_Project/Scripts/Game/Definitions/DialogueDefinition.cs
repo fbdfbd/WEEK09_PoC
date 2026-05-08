@@ -12,45 +12,24 @@ namespace App.Gameplay.Definitions
         [SerializeField] private int _priority;
         [SerializeField] private string _title;
         [SerializeField] private ConditionDefinition _conditions;
-        [SerializeField] private string _firstNodeId;
+        [SerializeField] private DialogueNodeDefinition _firstNode;
         [SerializeField] private DialogueNodeDefinition[] _nodes = Array.Empty<DialogueNodeDefinition>();
 
         public string Id => _id;
         public int Priority => _priority;
         public string Title => _title;
         public ConditionDefinition Conditions => _conditions;
-        public string FirstNodeId => _firstNodeId;
+        public DialogueNodeDefinition FirstNode => _firstNode;
         public DialogueNodeDefinition[] Nodes => _nodes;
-
-        public DialogueNodeDefinition GetNode(string nodeId)
-        {
-            if (string.IsNullOrWhiteSpace(nodeId) || _nodes == null)
-            {
-                return null;
-            }
-
-            for (var i = 0; i < _nodes.Length; i++)
-            {
-                var node = _nodes[i];
-                if (node != null && node.Id == nodeId)
-                {
-                    return node;
-                }
-            }
-
-            return null;
-        }
     }
 
-    [Serializable]
-    public sealed class DialogueNodeDefinition
+    [CreateAssetMenu(fileName = "DialogueNode_", menuName = "App/Data/Dialogue Node")]
+    public sealed class DialogueNodeDefinition : ScriptableObject
     {
-        [SerializeField] private string _id;
         [SerializeField] private string _speaker;
         [SerializeField, TextArea(2, 6)] private string _body;
         [SerializeField] private DialogueChoiceDefinition[] _choices = Array.Empty<DialogueChoiceDefinition>();
 
-        public string Id => _id;
         public string Speaker => _speaker;
         public string Body => _body;
         public DialogueChoiceDefinition[] Choices => _choices;
@@ -61,10 +40,10 @@ namespace App.Gameplay.Definitions
     {
         [SerializeField] private string _label;
         [SerializeField] private EffectDefinition[] _effects = Array.Empty<EffectDefinition>();
-        [SerializeField] private string _nextNodeId;
+        [SerializeField] private DialogueNodeDefinition _nextNode;
 
         public string Label => _label;
         public EffectDefinition[] Effects => _effects;
-        public string NextNodeId => _nextNodeId;
+        public DialogueNodeDefinition NextNode => _nextNode;
     }
 }

@@ -21,6 +21,9 @@ namespace App.Bootstrap
             builder.Register<EffectProcessor>(Lifetime.Scoped);
             builder.Register<EnvironmentControlProcessor>(Lifetime.Scoped);
             builder.Register<ConditionEvaluator>(Lifetime.Scoped);
+            builder.Register<ContentSelector>(Lifetime.Scoped);
+            builder.Register<DialoguePlayer>(Lifetime.Transient);
+            builder.Register<IntroPhase>(Lifetime.Scoped);
             builder.Register<MorningPhase>(Lifetime.Scoped);
             builder.Register<NoonPhase>(Lifetime.Scoped);
             builder.Register<EveningPhase>(Lifetime.Scoped);

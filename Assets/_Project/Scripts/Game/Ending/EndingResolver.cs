@@ -1,37 +1,49 @@
-using System.Linq;
 using App.Foundation.Data;
 using App.Gameplay.Conditions;
 using App.Gameplay.Definitions;
-using App.Gameplay.Runtime;
 
 namespace App.Gameplay.Ending
 {
     public sealed class EndingResolver
     {
         private readonly IDataRegistry _dataRegistry;
-        private readonly ConditionEvaluator _conditionEvaluator;
-        private readonly GameRuntimeState _runtimeState;
+        private readonly ContentSelector _contentSelector;
 
         public EndingResolver(
             IDataRegistry dataRegistry,
-            ConditionEvaluator conditionEvaluator,
-            GameRuntimeState runtimeState)
+            ContentSelector contentSelector)
         {
             _dataRegistry = dataRegistry;
-            _conditionEvaluator = conditionEvaluator;
-            _runtimeState = runtimeState;
+            _contentSelector = contentSelector;
         }
 
         public EndingDefinition Resolve()
         {
             var endings = _dataRegistry.GetEndings();
-            var matched = endings
-                .Where(ending => ending != null && !ending.IsFallback)
-                .Where(ending => _conditionEvaluator.IsMet(ending.Conditions, _runtimeState))
-                .OrderByDescending(ending => ending.Priority)
-                .FirstOrDefault();
+            if (endings == null)
+            {
+                return null;
+            }
 
-            return matched ?? endings.FirstOrDefault(ending => ending != null && ending.IsFallback);
+            var matched = _contentSelector.SelectHighestPriority(
+                endings,
+                ending => ending.IsFallback ? null : ending.Conditions,
+                ending => ending.IsFallback ? int.MinValue : ending.Priority);
+
+            if (matched != null && !matched.IsFallback)
+            {
+                return matched;
+            }
+
+            foreach (var ending in endings)
+            {
+                if (ending != null && ending.IsFallback)
+                {
+                    return ending;
+                }
+            }
+
+            return null;
         }
     }
 }

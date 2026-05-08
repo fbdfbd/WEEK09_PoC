@@ -8,10 +8,12 @@ namespace App.Foundation.Data
     public sealed class ScriptableObjectDataRegistry : IDataRegistry
     {
         private const string EnvironmentControlPath = "Data/EnvironmentControls";
+        private const string IntroDialoguePath = "Data/Intro";
         private const string WeekPath = "Data/Weeks";
         private const string EndingPath = "Data/Endings";
 
         private readonly Dictionary<string, EnvironmentControlDefinition> _environmentControls = new();
+        private DialogueDefinition _introDialogue;
         private readonly Dictionary<int, WeekDefinition> _weeks = new();
         private readonly List<EndingDefinition> _endings = new();
         private bool _isLoaded;
@@ -33,6 +35,12 @@ namespace App.Foundation.Data
         {
             LoadIfNeeded();
             return new List<EnvironmentControlDefinition>(_environmentControls.Values);
+        }
+
+        public DialogueDefinition GetIntroDialogue()
+        {
+            LoadIfNeeded();
+            return _introDialogue;
         }
 
         public WeekDefinition GetWeek(int weekIndex)
@@ -80,7 +88,27 @@ namespace App.Foundation.Data
             }
 
             LoadWeeks();
+            LoadIntroDialogue();
             LoadEndings();
+        }
+
+        private void LoadIntroDialogue()
+        {
+            var definitions = Resources.LoadAll<DialogueDefinition>(IntroDialoguePath);
+            foreach (var definition in definitions)
+            {
+                if (definition == null)
+                {
+                    continue;
+                }
+
+                if (_introDialogue != null)
+                {
+                    throw new InvalidOperationException("Only one intro dialogue is allowed.");
+                }
+
+                _introDialogue = definition;
+            }
         }
 
         private void LoadWeeks()

@@ -9,6 +9,7 @@ namespace App.Gameplay.Runtime
         private readonly List<ReportEntry> _reports = new();
 
         public int CurrentWeekIndex { get; private set; } = 1;
+        public bool HasCompletedIntro { get; private set; }
         public bool HasReachedEnding { get; private set; }
         public CharacterState Character { get; } = new();
         public EnvironmentState Environment { get; } = new();
@@ -47,6 +48,11 @@ namespace App.Gameplay.Runtime
         public void MoveToNextWeek()
         {
             CurrentWeekIndex++;
+        }
+
+        public void MarkIntroCompleted()
+        {
+            HasCompletedIntro = true;
         }
 
         public void MarkEndingReached()

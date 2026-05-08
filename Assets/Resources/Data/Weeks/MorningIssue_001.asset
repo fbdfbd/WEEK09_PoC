@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 156cc91e427fa8742a9ab14c92cef5ae, type: 3}
+  m_Name: MorningIssue_001
+  m_EditorClassIdentifier: Assembly-CSharp::App.Gameplay.Definitions.MorningIssueDefinition
+  _id: morning_week_01
+  _priority: 100
+  _title: Week 1 Morning
+  _body: Sample week 1 morning choice.
+  _conditions:
+    _requiredFlags: []
+    _blockedFlags: []
+    _statRequirements: []
+    _environmentRequirements: []
+  _options:
+  - _label: Open the room
+    _controlType: 0
+    _effects:
+    - _type: 2
+      _targetId: room_opened
+      _statType: 0
+      _value: 0
+      _title: 
+      _body: 
+    - _type: 0
+      _targetId: 
+      _statType: 2
+      _value: 8
+      _title: 
+      _body: 
+  - _label: Lock the room
+    _controlType: 1
+    _effects:
+    - _type: 2
+      _targetId: room_locked
+      _statType: 0
+      _value: 0
+      _title: 
+      _body: 
+    - _type: 0
+      _targetId: 
+      _statType: 3
+      _value: 8
+      _title: 
+      _body: 

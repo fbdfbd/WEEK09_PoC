@@ -1,4 +1,5 @@
-using System.Linq;
+using System.Collections.Generic;
+using App.Foundation.Data;
 using App.Gameplay.Conditions;
 using App.Gameplay.Definitions;
 using App.Gameplay.Effects;
@@ -8,16 +9,68 @@ namespace App.Gameplay.Phases
 {
     public sealed class EveningPhase
     {
-        private readonly ConditionEvaluator _conditionEvaluator;
+        private readonly DialoguePlayer _dialoguePlayer;
+
+        public EveningPhase(DialoguePlayer dialoguePlayer)
+        {
+            _dialoguePlayer = dialoguePlayer;
+        }
+
+        public DialogueDefinition CurrentDialogue => _dialoguePlayer.CurrentDialogue;
+        public DialogueNodeDefinition CurrentNode => _dialoguePlayer.CurrentNode;
+
+        public DialogueNodeDefinition Enter(WeekDefinition week)
+        {
+            return _dialoguePlayer.Enter(week?.EveningDialogues);
+        }
+
+        public PhaseResult SelectChoice(int choiceIndex)
+        {
+            return _dialoguePlayer.SelectChoice(choiceIndex);
+        }
+
+        public bool IsCompleted => _dialoguePlayer.IsCompleted;
+    }
+
+    public sealed class IntroPhase
+    {
+        private readonly IDataRegistry _dataRegistry;
+        private readonly DialoguePlayer _dialoguePlayer;
+
+        public IntroPhase(IDataRegistry dataRegistry, DialoguePlayer dialoguePlayer)
+        {
+            _dataRegistry = dataRegistry;
+            _dialoguePlayer = dialoguePlayer;
+        }
+
+        public DialogueDefinition CurrentDialogue => _dialoguePlayer.CurrentDialogue;
+        public DialogueNodeDefinition CurrentNode => _dialoguePlayer.CurrentNode;
+
+        public DialogueNodeDefinition Enter()
+        {
+            return _dialoguePlayer.Enter(_dataRegistry.GetIntroDialogue());
+        }
+
+        public PhaseResult SelectChoice(int choiceIndex)
+        {
+            return _dialoguePlayer.SelectChoice(choiceIndex);
+        }
+
+        public bool IsCompleted => _dialoguePlayer.IsCompleted;
+    }
+
+    public sealed class DialoguePlayer
+    {
+        private readonly ContentSelector _contentSelector;
         private readonly EffectProcessor _effectProcessor;
         private readonly GameRuntimeState _runtimeState;
 
-        public EveningPhase(
-            ConditionEvaluator conditionEvaluator,
+        public DialoguePlayer(
+            ContentSelector contentSelector,
             EffectProcessor effectProcessor,
             GameRuntimeState runtimeState)
         {
-            _conditionEvaluator = conditionEvaluator;
+            _contentSelector = contentSelector;
             _effectProcessor = effectProcessor;
             _runtimeState = runtimeState;
         }
@@ -25,14 +78,20 @@ namespace App.Gameplay.Phases
         public DialogueDefinition CurrentDialogue { get; private set; }
         public DialogueNodeDefinition CurrentNode { get; private set; }
 
-        public DialogueNodeDefinition Enter(WeekDefinition week)
+        public DialogueNodeDefinition Enter(IReadOnlyList<DialogueDefinition> dialogues)
         {
-            CurrentDialogue = week?.EveningDialogues?
-                .Where(dialogue => dialogue != null && _conditionEvaluator.IsMet(dialogue.Conditions, _runtimeState))
-                .OrderByDescending(dialogue => dialogue.Priority)
-                .FirstOrDefault();
+            CurrentDialogue = _contentSelector.SelectHighestPriority(
+                dialogues,
+                dialogue => dialogue.Conditions,
+                dialogue => dialogue.Priority);
+            CurrentNode = CurrentDialogue?.FirstNode;
+            return CurrentNode;
+        }
 
-            CurrentNode = CurrentDialogue?.GetNode(CurrentDialogue.FirstNodeId);
+        public DialogueNodeDefinition Enter(DialogueDefinition dialogue)
+        {
+            CurrentDialogue = dialogue;
+            CurrentNode = CurrentDialogue?.FirstNode;
             return CurrentNode;
         }
 
@@ -49,12 +108,8 @@ namespace App.Gameplay.Phases
             }
 
             var choice = CurrentNode.Choices[choiceIndex];
-            foreach (var effect in choice.Effects ?? System.Array.Empty<EffectDefinition>())
-            {
-                _effectProcessor.Apply(effect, _runtimeState);
-            }
-
-            CurrentNode = CurrentDialogue?.GetNode(choice.NextNodeId);
+            _effectProcessor.ApplyAll(choice.Effects, _runtimeState);
+            CurrentNode = choice.NextNode;
             return PhaseResult.Success();
         }
 

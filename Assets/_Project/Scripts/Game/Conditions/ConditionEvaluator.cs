@@ -1,8 +1,41 @@
+using System.Linq;
 using App.Gameplay.Environment;
 using App.Gameplay.Runtime;
 
 namespace App.Gameplay.Conditions
 {
+    public sealed class ContentSelector
+    {
+        private readonly ConditionEvaluator _conditionEvaluator;
+        private readonly GameRuntimeState _runtimeState;
+
+        public ContentSelector(
+            ConditionEvaluator conditionEvaluator,
+            GameRuntimeState runtimeState)
+        {
+            _conditionEvaluator = conditionEvaluator;
+            _runtimeState = runtimeState;
+        }
+
+        public T SelectHighestPriority<T>(
+            System.Collections.Generic.IEnumerable<T> contents,
+            System.Func<T, ConditionDefinition> getConditions,
+            System.Func<T, int> getPriority)
+            where T : class
+        {
+            if (contents == null)
+            {
+                return null;
+            }
+
+            return contents
+                .Where(content => content != null)
+                .Where(content => _conditionEvaluator.IsMet(getConditions(content), _runtimeState))
+                .OrderByDescending(getPriority)
+                .FirstOrDefault();
+        }
+    }
+
     public sealed class ConditionEvaluator
     {
         public bool IsMet(ConditionDefinition condition, GameRuntimeState runtimeState)

@@ -1,4 +1,3 @@
-using System.Linq;
 using App.Gameplay.Conditions;
 using App.Gameplay.Definitions;
 using App.Gameplay.Effects;
@@ -8,16 +7,16 @@ namespace App.Gameplay.Phases
 {
     public sealed class MorningPhase
     {
-        private readonly ConditionEvaluator _conditionEvaluator;
+        private readonly ContentSelector _contentSelector;
         private readonly EffectProcessor _effectProcessor;
         private readonly GameRuntimeState _runtimeState;
 
         public MorningPhase(
-            ConditionEvaluator conditionEvaluator,
+            ContentSelector contentSelector,
             EffectProcessor effectProcessor,
             GameRuntimeState runtimeState)
         {
-            _conditionEvaluator = conditionEvaluator;
+            _contentSelector = contentSelector;
             _effectProcessor = effectProcessor;
             _runtimeState = runtimeState;
         }
@@ -26,11 +25,10 @@ namespace App.Gameplay.Phases
 
         public MorningIssueDefinition Enter(WeekDefinition week)
         {
-            CurrentIssue = week?.MorningIssues?
-                .Where(issue => issue != null && _conditionEvaluator.IsMet(issue.Conditions, _runtimeState))
-                .OrderByDescending(issue => issue.Priority)
-                .FirstOrDefault();
-
+            CurrentIssue = _contentSelector.SelectHighestPriority(
+                week?.MorningIssues,
+                issue => issue.Conditions,
+                issue => issue.Priority);
             return CurrentIssue;
         }
 
@@ -47,11 +45,7 @@ namespace App.Gameplay.Phases
             }
 
             var option = CurrentIssue.Options[optionIndex];
-            foreach (var effect in option.Effects ?? System.Array.Empty<EffectDefinition>())
-            {
-                _effectProcessor.Apply(effect, _runtimeState);
-            }
-
+            _effectProcessor.ApplyAll(option.Effects, _runtimeState);
             return PhaseResult.Success();
         }
     }

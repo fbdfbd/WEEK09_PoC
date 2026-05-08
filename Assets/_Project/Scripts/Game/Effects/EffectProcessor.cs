@@ -4,6 +4,21 @@ namespace App.Gameplay.Effects
 {
     public sealed class EffectProcessor
     {
+        public void ApplyAll(
+            System.Collections.Generic.IEnumerable<EffectDefinition> effects,
+            GameRuntimeState runtimeState)
+        {
+            if (effects == null)
+            {
+                return;
+            }
+
+            foreach (var effect in effects)
+            {
+                Apply(effect, runtimeState);
+            }
+        }
+
         public void Apply(EffectDefinition effect, GameRuntimeState runtimeState)
         {
             if (effect == null || runtimeState == null)

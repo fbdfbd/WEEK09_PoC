@@ -1,0 +1,62 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c53bbfd88eb17994fb51828fa98407bf, type: 3}
+  m_Name: Dialogue_Evening_001
+  m_EditorClassIdentifier: Assembly-CSharp::App.Gameplay.Definitions.DialogueDefinition
+  _id: evening_week_01
+  _priority: 100
+  _title: Week 1 Evening
+  _conditions:
+    _requiredFlags: []
+    _blockedFlags: []
+    _statRequirements: []
+    _environmentRequirements: []
+  _firstNodeId: start
+  _nodes:
+  - _id: start
+    _speaker: Student
+    _body: Sample evening 1.
+    _choices:
+    - _label: Listen
+      _effects:
+      - _type: 2
+        _targetId: listened_week_01
+        _statType: 0
+        _value: 0
+        _title: 
+        _body: 
+      - _type: 0
+        _targetId: 
+        _statType: 2
+        _value: 6
+        _title: 
+        _body: 
+      _nextNodeId: end
+    - _label: Push
+      _effects:
+      - _type: 2
+        _targetId: pushed_week_01
+        _statType: 0
+        _value: 0
+        _title: 
+        _body: 
+      - _type: 0
+        _targetId: 
+        _statType: 1
+        _value: 6
+        _title: 
+        _body: 
+      _nextNodeId: end
+  - _id: end
+    _speaker: Student
+    _body: Week 1 evening complete.
+    _choices: []
