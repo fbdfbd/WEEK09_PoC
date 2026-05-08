@@ -14,4 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp:App.Gameplay.Definitions:DialogueNodeDefinition
   _speaker: 
   _body: 
-  _choices: []
+  _choices:
+  - _label: 
+    _effects: []
+    _nextNode: {fileID: 0}
