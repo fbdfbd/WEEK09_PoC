@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Oscillo Patch - 신호 조립 퍼즐</title>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #050508; color: #eee; font-family: 'Consolas', monospace; user-select: none; touch-action: none; -webkit-user-select: none; }
+        canvas { display: block; position: absolute; top: 0; left: 0; z-index: 1; pointer-events: none; }
+        
+        /* 전체 UI 레이아웃 */
+        #ui-layer { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 10; display: flex; flex-direction: column; justify-content: space-between; pointer-events: none; }
+        
+        /* 상단: 의뢰 및 조건창 */
+        #mission-board { background: rgba(10,15,20,0.95); border-bottom: 2px solid #00ffcc; padding: 15px 30px; pointer-events: auto; display: flex; flex-direction: column; gap: 10px; }
+        .title-area h1 { margin: 0; font-size: 24px; letter-spacing: 2px; color: #00ffcc; text-shadow: 0 0 10px rgba(0,255,204,0.5); }
+        .title-area p { margin: 5px 0 0 0; font-size: 13px; color: #aaa; }
+        
+        #conditions { display: flex; gap: 15px; flex-wrap: wrap; }
+        .condition { background: #111; border: 1px solid #444; padding: 8px 15px; border-radius: 4px; font-size: 13px; display: flex; align-items: center; gap: 10px; color: #888; transition: 0.3s; }
+        .indicator { width: 12px; height: 12px; border-radius: 50%; background: #ff3333; box-shadow: 0 0 8px #ff3333; }
+        .condition.met { border-color: #00ffcc; color: #00ffcc; background: rgba(0,255,204,0.1); }
+        .condition.met .indicator { background: #00ffcc; box-shadow: 0 0 8px #00ffcc; }
+
+        /* 하단: 조립 패치 보드 */
+        #patch-area { display: flex; height: 260px; background: rgba(10,10,15,0.98); border-top: 2px solid #333; pointer-events: auto; }
+        
+        /* 인벤토리 (좌측) */
+        #inventory { flex: 1; border-right: 2px solid #222; padding: 15px; display: flex; flex-direction: column; }
+        .sec-title { font-size: 14px; color: #888; margin-bottom: 15px; font-weight: bold; letter-spacing: 1px; }
+        #inv-grid { display: flex; flex-wrap: wrap; gap: 10px; align-content: flex-start; flex: 1; }
+        
+        /* 채널 슬롯 (우측) */
+        #circuit-board { flex: 1.5; padding: 15px; display: flex; flex-direction: column; gap: 15px; }
+        .channel { display: flex; align-items: center; gap: 15px; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 5px; border: 1px solid #222; }
+        .ch-name { font-size: 24px; font-weight: bold; width: 30px; text-align: center; }
+        .ch-x { color: #00ccff; }
+        .ch-y { color: #ff3366; }
+        .slots { display: flex; gap: 10px; flex: 1; }
+
+        /* 칩(모듈) 및 슬롯 디자인 */
+        .chip { background: #1a1a24; border: 2px solid #444; border-radius: 6px; padding: 10px; width: 70px; text-align: center; cursor: pointer; transition: 0.1s; box-shadow: 0 4px 6px rgba(0,0,0,0.5); }
+        .chip:active { transform: scale(0.95); }
+        .chip.selected { border-color: #00ffcc; background: #002222; box-shadow: 0 0 15px rgba(0,255,204,0.5); transform: translateY(-3px); }
+        .chip-name { font-size: 11px; color: #ccc; font-weight: bold; margin-bottom: 5px; }
+        .chip-val { font-size: 14px; font-weight: bold; }
+
+        .slot { width: 90px; height: 60px; border: 2px dashed #444; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #555; font-size: 12px; font-weight: bold; cursor: pointer; background: rgba(255,255,255,0.02); transition: 0.2s; }
+        .slot:hover { border-color: #888; background: rgba(255,255,255,0.05); }
+        .slot.filled { border-style: solid; border-color: #00ffcc; background: #112; box-shadow: inset 0 0 10px rgba(0,255,204,0.2); }
+
+        /* 상태 및 제출 버튼 */
+        #action-area { position: absolute; right: 30px; bottom: 290px; display: flex; flex-direction: column; align-items: flex-end; pointer-events: auto; }
+        #submit-btn { padding: 15px 40px; font-size: 18px; font-weight: bold; background: #222; color: #555; border: 2px solid #444; border-radius: 5px; cursor: not-allowed; transition: 0.3s; font-family: inherit; }
+        #submit-btn.ready { background: #00ffcc; color: #000; border-color: #00ffcc; box-shadow: 0 0 20px #00ffcc; cursor: pointer; }
+        #submit-btn.ready:hover { transform: scale(1.05); }
+        
+        #success-msg { font-size: 30px; color: #00ffcc; font-weight: bold; text-shadow: 0 0 20px #00ffcc; opacity: 0; transition: 0.5s; position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); pointer-events: none; z-index: 100; }
+    </style>
+</head>
+<body>
+
+<div id="ui-layer">
+    <div id="mission-board">
+        <div class="title-area">
+            <h1>OSCILLO PATCH : SIGNAL WEAVER</h1>
+            <p>의뢰 목표: 서보 모터 위상 동기화 파형 복구</p>
+        </div>
+        <div id="conditions">
+            <div class="condition" id="cond-ratio"><div class="indicator"></div>비율 1:2 (폐곡선 생성)</div>
+            <div class="condition" id="cond-nodes"><div class="indicator"></div>2개의 타겟 접점 관통</div>
+            <div class="condition" id="cond-power"><div class="indicator"></div>출력(진폭) 150 이하 유지</div>
+            <div class="condition" id="cond-phase"><div class="indicator"></div>교차점 1개 생성 (8자 모양)</div>
+        </div>
+    </div>
+
+    <div id="action-area">
+        <button id="submit-btn" disabled>수리 완료</button>
+    </div>
+    <div id="success-msg">SYSTEM REPAIRED</div>
+
+    <div id="patch-area">
+        <div id="inventory">
+            <div class="sec-title">INVENTORY (클릭하여 선택)</div>
+            <div id="inv-grid"></div>
+        </div>
+        <div id="circuit-board">
+            <div class="sec-title">SIGNAL CHANNELS (선택 후 빈 슬롯 클릭)</div>
+            <div class="channel">
+                <div class="ch-name ch-x">X</div>
+                <div class="slots" id="slots-x">
+                    <div class="slot" data-ch="x" data-idx="0">EMPTY</div>
+                    <div class="slot" data-ch="x" data-idx="1">EMPTY</div>
+                    <div class="slot" data-ch="x" data-idx="2">EMPTY</div>
+                </div>
+            </div>
+            <div class="channel">
+                <div class="ch-name ch-y">Y</div>
+                <div class="slots" id="slots-y">
+                    <div class="slot" data-ch="y" data-idx="0">EMPTY</div>
+                    <div class="slot" data-ch="y" data-idx="1">EMPTY</div>
+                    <div class="slot" data-ch="y" data-idx="2">EMPTY</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<canvas id="game"></canvas>
+
+<script>
+    const canvas = document.getElementById('game');
+    const ctx = canvas.getContext('2d');
+    
+    function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    // --- 게임 데이터 모델 ---
+    
+    // 부품 사전
+    const MODULES = {
+        'OSC_1': { name: '발진기', val: 'x 1', color: '#aaa', eff: { f: 1 } },
+        'OSC_2': { name: '발진기', val: 'x 2', color: '#aaa', eff: { f: 2 } },
+        'AMP_P': { name: '증폭기', val: '+50', color: '#ffcc00', eff: { a: 50 } },
+        'AMP_M': { name: '감쇠기', val: '-40', color: '#ff9900', eff: { a: -40 } },
+        'PH_90': { name: '위상코일', val: '+90°', color: '#00ccff', eff: { p: Math.PI/2 } },
+        'PH_45': { name: '위상코일', val: '+45°', color: '#0088ff', eff: { p: Math.PI/4 } },
+        'INV':   { name: '반전기', val: 'INV', color: '#cc00ff', eff: { p: Math.PI } }
+    };
+
+    // 상태 관리 (State)
+    let state = {
+        inventory: ['OSC_1', 'OSC_2', 'AMP_P', 'AMP_P', 'AMP_M', 'PH_90', 'PH_45', 'INV'],
+        board: {
+            x: [null, null, null],
+            y: [null, null, null]
+        },
+        selection: null // { type: 'inv', idx: 0 } 또는 null
+    };
+
+    // 타겟 노드 (화면 중앙 기준 픽셀 좌표)
+    // 이 좌표를 관통해야 조건이 달성됨
+    const TARGETS = [
+        { x: 90, y: -90 },
+        { x: -90, y: 90 }
+    ];
+
+    // --- UI 렌더링 및 인터랙션 로직 ---
+    function renderUI() {
+        // 인벤토리 렌더링
+        const invGrid = document.getElementById('inv-grid');
+        invGrid.innerHTML = '';
+        state.inventory.forEach((modId, i) => {
+            if (!modId) return; // 빈 자리 패스
+            const mod = MODULES[modId];
+            const div = document.createElement('div');
+            const isSelected = state.selection && state.selection.type === 'inv' && state.selection.idx === i;
+            div.className = `chip ${isSelected ? 'selected' : ''}`;
+            div.innerHTML = `<div class="chip-name">${mod.name}</div><div class="chip-val" style="color:${mod.color}">${mod.val}</div>`;
+            
+            // 칩 클릭 이벤트 (선택/해제)
+            div.onpointerdown = () => {
+                if (isSelected) state.selection = null;
+                else state.selection = { type: 'inv', idx: i };
+                renderUI();
+            };
+            invGrid.appendChild(div);
+        });
+
+        // 보드 슬롯 렌더링
+        ['x', 'y'].forEach(ch => {
+            const slotElements = document.querySelectorAll(`#slots-${ch} .slot`);
+            state.board[ch].forEach((modId, i) => {
+                const slot = slotElements[i];
+                if (modId) {
+                    const mod = MODULES[modId];
+                    slot.className = 'slot filled chip'; // css 재사용을 위해 chip 클래스 추가
+                    slot.innerHTML = `<div class="chip-name">${mod.name}</div><div class="chip-val" style="color:${mod.color}">${mod.val}</div>`;
+                } else {
+                    slot.className = 'slot';
+                    slot.innerHTML = 'EMPTY';
+                }
+
+                // 슬롯 클릭 이벤트 (장착/해제)
+                slot.onpointerdown = () => {
+                    if (modId) {
+                        // 이미 칩이 있으면 -> 인벤토리로 반환
+                        let emptyIdx = state.inventory.indexOf(null);
+                        if (emptyIdx !== -1) state.inventory[emptyIdx] = modId;
+                        else state.inventory.push(modId);
+                        
+                        state.board[ch][i] = null;
+                        state.selection = null;
+                    } else if (state.selection && state.selection.type === 'inv') {
+                        // 빈 슬롯이고, 인벤토리에서 칩이 선택된 상태면 -> 장착
+                        state.board[ch][i] = state.inventory[state.selection.idx];
+                        state.inventory[state.selection.idx] = null;
+                        state.selection = null;
+                    }
+                    renderUI();
+                };
+            });
+        });
+    }
+
+    renderUI();
+
+    // --- 신호 컴파일러 ---
+    function compileSignal() {
+        let sig = {
+            x: { f: 0, p: 0, a: 100 }, // 기본 진폭 100
+            y: { f: 0, p: 0, a: 100 }
+        };
+
+        ['x', 'y'].forEach(ch => {
+            state.board[ch].forEach(modId => {
+                if (!modId) return;
+                const eff = MODULES[modId].eff;
+                if (eff.f) sig[ch].f += eff.f;
+                if (eff.p) sig[ch].p += eff.p;
+                if (eff.a) sig[ch].a += eff.a;
+            });
+        });
+        return sig;
+    }
+
+    // --- 메인 그래픽 & 판정 루프 ---
+    let time = 0;
+    let isCleared = false;
+
+    function loop() {
+        ctx.fillStyle = '#050508';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        let cx = canvas.width / 2;
+        let cy = canvas.height / 2 - 100; // 하단 UI 피해서 중앙점 설정
+
+        let sig = compileSignal();
+        let isValid = (sig.x.f > 0 && sig.y.f > 0); // 발진기가 둘 다 있어야 선이 그려짐
+
+        let points = [];
+        let maxOutput = Math.max(sig.x.a, sig.y.a);
+
+        // 1. 궤적 생성
+        if (isValid) {
+            let res = 300;
+            let maxT = Math.PI * 2 * Math.max(sig.x.f, sig.y.f);
+            for (let i = 0; i <= res; i++) {
+                let t = (i / res) * maxT;
+                let px = cx + sig.x.a * Math.sin(sig.x.f * t + sig.x.p);
+                let py = cy + sig.y.a * Math.sin(sig.y.f * t + sig.y.p);
+                points.push({ x: px, y: py });
+            }
+        }
+
+        // 2. 조건 검사 로직
+        let cRatio = isValid && ((sig.x.f === 1 && sig.y.f === 2) || (sig.x.f === 2 && sig.y.f === 1));
+        let cPower = maxOutput <= 150;
+        
+        let nodeHits = 0;
+        if (isValid) {
+            TARGETS.forEach(node => {
+                for (let p of points) {
+                    if (Math.hypot(p.x - (cx + node.x), p.y - (cy + node.y)) < 15) {
+                        nodeHits++;
+                        break;
+                    }
+                }
+            });
+        }
+        let cNodes = (nodeHits === TARGETS.length);
+
+        // 8자 모양(교차점 1개) 판정: 1:2 비율에서 위상차가 0, PI 등이면 포물선.
+        // 위상차가 PI/2, 3PI/2 계열이어야 8자가 나옴.
+        let cPhase = false;
+        if (cRatio) {
+            let phaseDiff = Math.abs(sig.y.p - sig.x.p) % Math.PI;
+            // 위상차가 0이 아니면(포물선이 아니면) 8자로 인정 (오차 허용)
+            if (phaseDiff > 0.1 && phaseDiff < Math.PI - 0.1) cPhase = true;
+        }
+
+        // UI에 조건 상태 반영
+        document.getElementById('cond-ratio').className = 'condition' + (cRatio ? ' met' : '');
+        document.getElementById('cond-power').className = 'condition' + (cPower ? ' met' : '');
+        document.getElementById('cond-nodes').className = 'condition' + (cNodes ? ' met' : '');
+        document.getElementById('cond-phase').className = 'condition' + (cPhase ? ' met' : '');
+
+        let allClear = cRatio && cPower && cNodes && cPhase;
+        
+        const btn = document.getElementById('submit-btn');
+        if (allClear && !isCleared) {
+            btn.classList.add('ready');
+            btn.disabled = false;
+        } else {
+            btn.classList.remove('ready');
+            btn.disabled = true;
+        }
+
+        // 3. 렌더링 파트
+        
+        // 타겟 노드 그리기
+        TARGETS.forEach(node => {
+            let nx = cx + node.x;
+            let ny = cy + node.y;
+            ctx.beginPath();
+            ctx.arc(nx, ny, 12, 0, Math.PI * 2);
+            ctx.fillStyle = cNodes ? '#00ffcc' : 'rgba(255,255,255,0.05)';
+            ctx.strokeStyle = cNodes ? '#00ffcc' : '#444';
+            ctx.lineWidth = 2;
+            ctx.fill(); ctx.stroke();
+        });
+
+        // 과전압 위험 구역 (가이드라인)
+        ctx.beginPath();
+        ctx.rect(cx - 150, cy - 150, 300, 300);
+        ctx.strokeStyle = cPower ? 'rgba(255,255,255,0.05)' : 'rgba(255, 50, 50, 0.4)';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([8, 8]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // 궤적 그리기
+        if (isValid) {
+            ctx.beginPath();
+            points.forEach((p, i) => i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y));
+            
+            ctx.strokeStyle = allClear ? '#00ffcc' : (!cPower ? '#ff3366' : '#00aaff');
+            ctx.lineWidth = allClear ? 4 : 2;
+            ctx.globalCompositeOperation = 'lighter';
+            ctx.shadowBlur = allClear ? 20 : 10;
+            ctx.shadowColor = ctx.strokeStyle;
+            ctx.stroke();
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.shadowBlur = 0;
+
+            // 전자 빔 애니메이션
+            time += 0.05;
+            let bx = cx + sig.x.a * Math.sin(sig.x.f * time + sig.x.p);
+            let by = cy + sig.y.a * Math.sin(sig.y.f * time + sig.y.p);
+            ctx.beginPath();
+            ctx.arc(bx, by, 5, 0, Math.PI*2);
+            ctx.fillStyle = '#fff';
+            ctx.shadowBlur = 10; ctx.shadowColor = '#fff';
+            ctx.fill();
+            ctx.shadowBlur = 0;
+        } else {
+            ctx.fillStyle = '#444';
+            ctx.font = '20px Consolas';
+            ctx.textAlign = 'center';
+            ctx.fillText("NO SIGNAL / INSERT OSCILLATOR", cx, cy);
+        }
+
+        requestAnimationFrame(loop);
+    }
+
+    loop();
+
+    // --- 완료 버튼 이벤트 ---
+    document.getElementById('submit-btn').onpointerdown = () => {
+        if (!document.getElementById('submit-btn').classList.contains('ready')) return;
+        isCleared = true;
+        document.getElementById('submit-btn').style.display = 'none';
+        document.getElementById('success-msg').style.opacity = '1';
+        document.getElementById('patch-area').style.pointerEvents = 'none';
+        document.getElementById('patch-area').style.opacity = '0.3';
+    };
+</script>
+</body>
+</html>
