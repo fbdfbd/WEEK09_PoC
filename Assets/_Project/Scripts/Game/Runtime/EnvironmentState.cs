@@ -5,13 +5,13 @@ namespace App.Gameplay.Runtime
 {
     public sealed class EnvironmentState
     {
-        private readonly List<string> allowedTargets = new();
-        private readonly List<string> blockedTargets = new();
-        private readonly List<EnvironmentModifierState> modifiers = new();
+        private readonly List<string> _allowedTargets = new();
+        private readonly List<string> _blockedTargets = new();
+        private readonly List<EnvironmentModifierState> _modifiers = new();
 
-        public IReadOnlyList<string> AllowedTargets => allowedTargets;
-        public IReadOnlyList<string> BlockedTargets => blockedTargets;
-        public IReadOnlyList<EnvironmentModifierState> Modifiers => modifiers;
+        public IReadOnlyList<string> AllowedTargets => _allowedTargets;
+        public IReadOnlyList<string> BlockedTargets => _blockedTargets;
+        public IReadOnlyList<EnvironmentModifierState> Modifiers => _modifiers;
 
         public void Allow(string targetId)
         {
@@ -20,8 +20,8 @@ namespace App.Gameplay.Runtime
                 return;
             }
 
-            blockedTargets.Remove(targetId);
-            AddUnique(allowedTargets, targetId);
+            _blockedTargets.Remove(targetId);
+            AddUnique(_allowedTargets, targetId);
         }
 
         public void Block(string targetId)
@@ -31,8 +31,8 @@ namespace App.Gameplay.Runtime
                 return;
             }
 
-            allowedTargets.Remove(targetId);
-            AddUnique(blockedTargets, targetId);
+            _allowedTargets.Remove(targetId);
+            AddUnique(_blockedTargets, targetId);
         }
 
         public void SetModifier(string targetId, int value)
@@ -64,14 +64,14 @@ namespace App.Gameplay.Runtime
                 return null;
             }
 
-            var modifier = modifiers.Find(item => item.TargetId == targetId);
+            var modifier = _modifiers.Find(item => item.TargetId == targetId);
             if (modifier != null)
             {
                 return modifier;
             }
 
             modifier = new EnvironmentModifierState(targetId, 0);
-            modifiers.Add(modifier);
+            _modifiers.Add(modifier);
             return modifier;
         }
 

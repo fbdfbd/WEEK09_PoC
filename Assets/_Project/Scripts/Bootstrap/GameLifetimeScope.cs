@@ -1,5 +1,9 @@
+using App.Gameplay.Conditions;
 using App.Gameplay.Effects;
 using App.Gameplay.Environment;
+using App.Gameplay.Ending;
+using App.Gameplay.Loop;
+using App.Gameplay.Phases;
 using App.Gameplay.Runtime;
 using App.Gameplay.Session;
 using VContainer;
@@ -16,6 +20,12 @@ namespace App.Bootstrap
 
             builder.Register<EffectProcessor>(Lifetime.Scoped);
             builder.Register<EnvironmentControlProcessor>(Lifetime.Scoped);
+            builder.Register<ConditionEvaluator>(Lifetime.Scoped);
+            builder.Register<MorningPhase>(Lifetime.Scoped);
+            builder.Register<NoonPhase>(Lifetime.Scoped);
+            builder.Register<EveningPhase>(Lifetime.Scoped);
+            builder.Register<EndingResolver>(Lifetime.Scoped);
+            builder.Register<WeekLoop>(Lifetime.Scoped);
         }
     }
 }

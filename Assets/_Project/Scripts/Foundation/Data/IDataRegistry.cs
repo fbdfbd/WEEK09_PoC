@@ -7,5 +7,8 @@ namespace App.Foundation.Data
     {
         EnvironmentControlDefinition GetEnvironmentControl(string id);
         IReadOnlyList<EnvironmentControlDefinition> GetEnvironmentControls();
+        WeekDefinition GetWeek(int weekIndex);
+        IReadOnlyList<WeekDefinition> GetWeeks();
+        IReadOnlyList<EndingDefinition> GetEndings();
     }
 }

@@ -6,18 +6,18 @@ namespace App.Gameplay.Environment
 {
     public sealed class EnvironmentControlProcessor
     {
-        private readonly IDataRegistry dataRegistry;
-        private readonly EffectProcessor effectProcessor;
-        private readonly GameRuntimeState runtimeState;
+        private readonly IDataRegistry _dataRegistry;
+        private readonly EffectProcessor _effectProcessor;
+        private readonly GameRuntimeState _runtimeState;
 
         public EnvironmentControlProcessor(
             IDataRegistry dataRegistry,
             EffectProcessor effectProcessor,
             GameRuntimeState runtimeState)
         {
-            this.dataRegistry = dataRegistry;
-            this.effectProcessor = effectProcessor;
-            this.runtimeState = runtimeState;
+            _dataRegistry = dataRegistry;
+            _effectProcessor = effectProcessor;
+            _runtimeState = runtimeState;
         }
 
         public EnvironmentControlResult Apply(EnvironmentControlRequest request)
@@ -27,7 +27,7 @@ namespace App.Gameplay.Environment
                 return EnvironmentControlResult.Failed("Request is null.");
             }
 
-            var definition = dataRegistry.GetEnvironmentControl(request.ControlId);
+            var definition = _dataRegistry.GetEnvironmentControl(request.ControlId);
             if (definition == null)
             {
                 return EnvironmentControlResult.Failed($"Unknown control id: {request.ControlId}");
@@ -40,7 +40,7 @@ namespace App.Gameplay.Environment
 
             foreach (var effect in definition.Effects)
             {
-                effectProcessor.Apply(effect, runtimeState);
+                _effectProcessor.Apply(effect, _runtimeState);
             }
 
             return EnvironmentControlResult.Success();
