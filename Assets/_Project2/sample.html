@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>리사주 용접 퍼즐</title>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #050508; color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif; user-select: none; touch-action: none; }
+        canvas { display: block; touch-action: none; }
+        
+        #ui { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); text-align: center; pointer-events: none; z-index: 10; width: 100%; }
+        h1 { margin: 0; font-size: 24px; letter-spacing: 3px; color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
+        .subtitle { font-size: 13px; color: #aaa; margin-top: 5px; }
+        .hl-red { color: #ff3366; font-weight: bold; }
+        .hl-blue { color: #00ccff; font-weight: bold; }
+        .hl-spark { color: #fff; font-weight: bold; text-shadow: 0 0 5px #fff; }
+
+        /* 기어 버튼 */
+        #gear-panel { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; z-index: 20; }
+        .gear-btn { background: rgba(20, 20, 30, 0.8); border: 2px solid #333; color: #888; padding: 12px 20px; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.2s; touch-action: manipulation; }
+        .gear-btn.active { background: rgba(0, 204, 255, 0.2); border-color: #00ccff; color: #00ccff; box-shadow: 0 0 15px rgba(0, 204, 255, 0.5); transform: translateY(-5px); }
+
+        /* 화면 양옆 조작 가이드 & 스크롤 트랙 */
+        .track { position: absolute; top: 0; width: 40px; height: 100%; pointer-events: none; border-left: 1px dashed rgba(255,255,255,0.1); border-right: 1px dashed rgba(255,255,255,0.1); background: rgba(255,255,255,0.02); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        #track-left { left: 0; }
+        #track-right { right: 0; }
+        .track-text { color: rgba(255,255,255,0.2); font-weight: bold; letter-spacing: 5px; writing-mode: vertical-rl; }
+        .scroll-indicator { position: absolute; left: 50%; transform: translateX(-50%); width: 20px; height: 60px; background: rgba(0, 204, 255, 0.5); border-radius: 10px; transition: 0.1s; }
+
+        #shake-layer { width: 100vw; height: 100vh; position: absolute; top:0; left:0; pointer-events: none; transition: transform 0.05s; }
+    </style>
+</head>
+<body>
+
+<div id="shake-layer">
+    <canvas id="game"></canvas>
+</div>
+
+<!-- 드래그 피드백을 위한 시각적 트랙 -->
+<div class="track" id="track-left">
+    <div class="scroll-indicator" id="ind-left" style="top: 50%;"></div>
+    <div class="track-text">↕ PHASE</div>
+</div>
+<div class="track" id="track-right">
+    <div class="scroll-indicator" id="ind-right" style="top: 50%;"></div>
+    <div class="track-text">↕ ROTATE</div>
+</div>
+
+<div id="ui">
+    <h1>RESONANCE WELDING</h1>
+    <div class="subtitle">
+        <span class="hl-red">RED(기계)</span>와 <span class="hl-blue">BLUE(도구)</span>의 <span class="hl-spark">스파크</span>를 이동시켜 접점을 용접하세요.
+    </div>
+</div>
+
+<div id="gear-panel"></div>
+
+<script>
+    const canvas = document.getElementById('game');
+    const ctx = canvas.getContext('2d');
+    const shakeLayer = document.getElementById('shake-layer');
+    const indLeft = document.getElementById('ind-left');
+    const indRight = document.getElementById('ind-right');
+    
+    function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    // --- 시스템 타겟 (RED) ---
+    const targetFx = 3, targetFy = 2; // 정답 기어비
+    const masterPhase = 0;
+    
+    // --- 플레이어 (BLUE) ---
+    let playerFx = 1, playerFy = 2; // 시작 기어비를 다르게 주어 퍼즐 유도
+    let targetPhase = Math.PI / 4, currentPhase = Math.PI / 4;
+    let targetRot = 0, currentRot = 0;
+
+    // 기어 프리셋
+    const gears = [
+        { x: 1, y: 1 }, { x: 1, y: 2 }, { x: 2, y: 3 }, 
+        { x: 3, y: 2 }, { x: 3, y: 4 }
+    ];
+
+    // 접점(Nodes)
+    const nodes = [
+        { rx: -0.6, ry: -0.5, progress: 0, fixed: false },
+        { rx: 0.6, ry: 0.5, progress: 0, fixed: false },
+        { rx: 0.0, ry: 0.8, progress: 0, fixed: false }
+    ];
+
+    // UI 기어 버튼 생성
+    const gearPanel = document.getElementById('gear-panel');
+    gears.forEach((g) => {
+        let btn = document.createElement('button');
+        btn.className = 'gear-btn' + ((g.x===playerFx && g.y===playerFy) ? ' active' : '');
+        btn.innerText = `${g.x}:${g.y}`;
+        btn.onclick = () => {
+            document.querySelectorAll('.gear-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            playerFx = g.x; playerFy = g.y;
+        };
+        gearPanel.appendChild(btn);
+    });
+
+    // --- 강력한 입력 처리 (터치 씹힘 방지) ---
+    let activeSide = null;
+    let lastY = 0;
+
+    // Pointer Events를 사용해 마우스/터치 통합 처리
+    canvas.addEventListener('pointerdown', (e) => {
+        if (e.clientY > canvas.height - 100) return; // 하단 버튼 영역 보호
+        canvas.setPointerCapture(e.pointerId); // 브라우저 밖으로 나가도 드래그 유지!
+        
+        activeSide = e.clientX < canvas.width / 2 ? 'left' : 'right';
+        lastY = e.clientY;
+        
+        if (activeSide === 'left') indLeft.style.background = '#fff';
+        if (activeSide === 'right') indRight.style.background = '#fff';
+    });
+
+    canvas.addEventListener('pointermove', (e) => {
+        if (!activeSide) return;
+        let deltaY = e.clientY - lastY;
+        
+        if (activeSide === 'left') {
+            targetPhase -= deltaY * 0.015;
+            // UI 스크롤 피드백
+            let pos = 50 + Math.sin(targetPhase) * 40;
+            indLeft.style.top = `${pos}%`;
+        } 
+        if (activeSide === 'right') {
+            targetRot -= deltaY * 0.015;
+            // UI 스크롤 피드백
+            let pos = 50 + Math.sin(targetRot) * 40;
+            indRight.style.top = `${pos}%`;
+        }
+        lastY = e.clientY;
+    });
+
+    function releasePointer(e) {
+        canvas.releasePointerCapture(e.pointerId);
+        activeSide = null;
+        indLeft.style.background = 'rgba(0, 204, 255, 0.5)';
+        indRight.style.background = 'rgba(0, 204, 255, 0.5)';
+    }
+
+    canvas.addEventListener('pointerup', releasePointer);
+    canvas.addEventListener('pointercancel', releasePointer);
+
+    // --- 렌더링 루프 ---
+    let gameClear = false;
+
+    function loop() {
+        ctx.fillStyle = '#050508';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        let cx = canvas.width / 2;
+        let cy = canvas.height / 2;
+        let amp = Math.min(cx, cy) * 0.55;
+
+        // 부드러운 물리 적용
+        currentPhase += (targetPhase - currentPhase) * 0.15;
+        currentRot += (targetRot - currentRot) * 0.15;
+
+        // 점 계산 함수
+        function getPoints(fx, fy, phase, rot) {
+            let pts = [];
+            let res = 300;
+            let maxT = Math.PI * 2 * Math.max(fx, fy);
+            for (let i = 0; i <= res; i++) {
+                let t = (i / res) * maxT;
+                let px = amp * Math.sin(fx * t);
+                let py = amp * Math.sin(fy * t + phase);
+                // 2D 회전 적용
+                let nx = cx + (px * Math.cos(rot) - py * Math.sin(rot));
+                let ny = cy + (px * Math.sin(rot) + py * Math.cos(rot));
+                pts.push({ x: nx, y: ny });
+            }
+            return pts;
+        }
+
+        const redPoints = getPoints(targetFx, targetFy, masterPhase, 0);
+        const bluePoints = getPoints(playerFx, playerFy, currentPhase, currentRot);
+
+        // --- 스파크(교차점) 고속 연산 ---
+        let sparks = [];
+        let grid = {};
+        let cellSize = 8; // 정밀도
+
+        // RED 선분을 해시맵에 저장
+        for (let p of redPoints) {
+            let key = Math.floor(p.x / cellSize) + ',' + Math.floor(p.y / cellSize);
+            grid[key] = p;
+        }
+
+        // BLUE 선분과 겹치는지 확인
+        for (let p of bluePoints) {
+            let key = Math.floor(p.x / cellSize) + ',' + Math.floor(p.y / cellSize);
+            if (grid[key]) {
+                let isNew = true;
+                for (let s of sparks) {
+                    if (Math.hypot(p.x - s.x, p.y - s.y) < 20) { isNew = false; break; }
+                }
+                if (isNew) sparks.push({ x: p.x, y: p.y });
+            }
+        }
+
+        // --- 그리기 파트 ---
+        ctx.globalCompositeOperation = 'lighter';
+        
+        function drawCurve(points, color, glow, thickness) {
+            ctx.beginPath();
+            for (let i = 0; i < points.length; i++) {
+                if (i === 0) ctx.moveTo(points[i].x, points[i].y);
+                else ctx.lineTo(points[i].x, points[i].y);
+            }
+            ctx.strokeStyle = color;
+            ctx.lineWidth = thickness;
+            ctx.shadowBlur = glow;
+            ctx.shadowColor = color;
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+        }
+
+        // 1. 붉은색 타겟 곡선
+        drawCurve(redPoints, 'rgba(255, 50, 100, 0.4)', 10, 3);
+        
+        // 2. 푸른색 플레이어 곡선
+        if (gameClear) {
+            drawCurve(bluePoints, '#ffcc00', 20, 4); // 클리어 시 황금색
+        } else {
+            drawCurve(bluePoints, 'rgba(0, 200, 255, 0.6)', 15, 3);
+            
+            // 회전(ROTATION)을 명확하게 보여주는 십자 보조선
+            ctx.beginPath();
+            let rotL = amp + 20;
+            ctx.moveTo(cx - rotL * Math.cos(currentRot), cy - rotL * Math.sin(currentRot));
+            ctx.lineTo(cx + rotL * Math.cos(currentRot), cy + rotL * Math.sin(currentRot));
+            ctx.moveTo(cx - rotL * Math.cos(currentRot + Math.PI/2), cy - rotL * Math.sin(currentRot + Math.PI/2));
+            ctx.lineTo(cx + rotL * Math.cos(currentRot + Math.PI/2), cy + rotL * Math.sin(currentRot + Math.PI/2));
+            ctx.strokeStyle = 'rgba(0, 204, 255, 0.15)';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([5, 5]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+        ctx.globalCompositeOperation = 'source-over';
+
+        // 3. 눈부신 교차점 (스파크)
+        sparks.forEach(s => {
+            ctx.beginPath();
+            ctx.arc(s.x, s.y, 6, 0, Math.PI * 2);
+            ctx.fillStyle = '#fff';
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = '#fff';
+            ctx.fill();
+            ctx.shadowBlur = 0;
+        });
+
+        // 4. 수리 접점 (용접 포인트)
+        let allFixed = true;
+        let isWelding = false;
+
+        nodes.forEach((node, idx) => {
+            let nx = cx + (amp * node.rx);
+            let ny = cy + (amp * node.ry);
+
+            if (!node.fixed && !gameClear) {
+                allFixed = false;
+                
+                let hit = false;
+                for (let s of sparks) {
+                    if (Math.hypot(s.x - nx, s.y - ny) < 25) { hit = true; break; }
+                }
+
+                if (hit) {
+                    node.progress += 2.5; // 용접 속도
+                    isWelding = true;
+                    // 용접 스파크 이펙트
+                    ctx.beginPath();
+                    ctx.arc(nx + (Math.random()-0.5)*15, ny + (Math.random()-0.5)*15, Math.random()*4, 0, Math.PI*2);
+                    ctx.fillStyle = '#fff'; ctx.fill();
+                } else {
+                    node.progress = Math.max(0, node.progress - 0.5);
+                }
+
+                if (node.progress >= 100) node.fixed = true;
+            }
+
+            // 노드 UI 그리기
+            ctx.beginPath();
+            ctx.arc(nx, ny, 16, 0, Math.PI * 2);
+            
+            if (node.fixed) {
+                ctx.fillStyle = '#00ffcc';
+                ctx.shadowBlur = 15; ctx.shadowColor = '#00ffcc';
+                ctx.fill();
+            } else {
+                ctx.fillStyle = '#111';
+                ctx.strokeStyle = '#444';
+                ctx.lineWidth = 2;
+                ctx.fill(); ctx.stroke();
+
+                if (node.progress > 0) {
+                    ctx.beginPath();
+                    ctx.arc(nx, ny, 16 + (node.progress/6), 0, Math.PI * 2);
+                    ctx.strokeStyle = `rgba(0, 200, 255, ${node.progress/100})`;
+                    ctx.lineWidth = 3;
+                    ctx.stroke();
+                }
+            }
+            ctx.shadowBlur = 0;
+            
+            // 텍스트
+            ctx.fillStyle = node.fixed ? '#000' : '#888';
+            ctx.font = 'bold 12px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            ctx.fillText("T" + (idx + 1), nx, ny);
+        });
+
+        // 5. 용접 타격감
+        if (isWelding && !gameClear) {
+            let sx = (Math.random() - 0.5) * 8;
+            let sy = (Math.random() - 0.5) * 8;
+            shakeLayer.style.transform = `translate(${sx}px, ${sy}px)`;
+        } else {
+            shakeLayer.style.transform = `translate(0px, 0px)`;
+        }
+
+        // 6. 클리어 연출
+        if (allFixed && !gameClear) {
+            gameClear = true;
+            document.querySelector('.subtitle').innerHTML = "<span style='color:#00ffcc; font-size:18px; font-weight:bold;'>모든 접점 수리 완료 (SYSTEM SYNCHRONIZED)</span>";
+            targetPhase = masterPhase;
+            targetRot = 0;
+            playerFx = targetFx;
+            playerFy = targetFy;
+        }
+
+        requestAnimationFrame(loop);
+    }
+
+    loop();
+</script>
+</body>
+</html>
