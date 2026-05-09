@@ -23,6 +23,14 @@ namespace Project3.OscilloPatch
             return previous;
         }
 
+        public void Clear()
+        {
+            for (int index = 0; index < slots.Length; index++)
+            {
+                slots[index] = null;
+            }
+        }
+
         public Signal BuildSignal()
         {
             Signal signal = new Signal();

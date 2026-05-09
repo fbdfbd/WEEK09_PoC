@@ -44,6 +44,7 @@ namespace Project3.OscilloPatch
 
         private InputActionAsset uiInputActions;
         private float electronTime;
+        private int currentMissionIndex;
         private bool isPatchOpen = true;
         private bool isRepaired;
 
@@ -86,6 +87,8 @@ namespace Project3.OscilloPatch
                 new[] { new Vector2(87f, 100f), new Vector2(-87f, 100f) });
 
             inventory = MakeInventory();
+            mission = MakeMission(currentMissionIndex);
+            inventory = MakeInventory(currentMissionIndex);
             PrepareCamera();
             PrepareEventSystem();
             CreateOscilloscope();
@@ -113,11 +116,94 @@ namespace Project3.OscilloPatch
             inventoryButtons.Clear();
             xSlotButtons.Clear();
             ySlotButtons.Clear();
+            xChannel.Clear();
+            yChannel.Clear();
             selectedPart = null;
             selectedInventoryIndex = -1;
             electronTime = 0f;
             isPatchOpen = true;
             isRepaired = false;
+        }
+
+        private Mission MakeMission(int missionIndex)
+        {
+            switch (missionIndex)
+            {
+                case 0:
+                    return new Mission(
+                        "1/3 서보 모터 출력 부족",
+                        "증폭하면 접점은 닿지만 과전압이 납니다. 제한 회로까지 같이 짜세요.",
+                        2,
+                        3,
+                        new[] { new Vector2(120f, 120f), new Vector2(-120f, 120f) },
+                        130f,
+                        8,
+                        new RequiredPartKindCondition(SignalPartKind.Clipper, "출력 제한 회로 포함"));
+                case 1:
+                    return new Mission(
+                        "2/3 스캐너 위상 불량",
+                        "위상 코일만으로는 기준이 틀어집니다. 반전 회로로 기준을 되돌리세요.",
+                        1,
+                        2,
+                        new[] { new Vector2(-100f, -87f), new Vector2(100f, -87f) },
+                        150f,
+                        5,
+                        new PhaseDifferenceCondition(),
+                        new RequiredPartKindCondition(SignalPartKind.Inverter, "반전 회로 포함"));
+                default:
+                    return new Mission(
+                        "3/3 동기 분배기 떨림",
+                        "분배기로 보조 파형을 만들되 출력과 복잡도를 넘기지 마세요.",
+                        1,
+                        1,
+                        new[] { new Vector2(65f, 100f), new Vector2(-65f, -100f) },
+                        130f,
+                        6,
+                        new RequiredPartKindCondition(SignalPartKind.Splitter, "분배 회로 포함"),
+                        new RequiredPartKindCondition(SignalPartKind.Attenuator, "감쇠 회로 포함"));
+            }
+        }
+
+        private List<SignalPart> MakeInventory(int missionIndex)
+        {
+            if (missionIndex == 0)
+            {
+                return new List<SignalPart>
+                {
+                    new SignalPart("OSC_2", "OSC", "2", new Color(0.85f, 0.85f, 0.85f), SignalPartKind.Oscillator, frequencyAdd: 2),
+                    new SignalPart("OSC_3", "OSC", "3", new Color(0.85f, 0.85f, 0.85f), SignalPartKind.Oscillator, frequencyAdd: 3),
+                    new SignalPart("AMP_X", "\uc99d\ud3ed", "+45", new Color(1f, 0.75f, 0.15f), SignalPartKind.Amplifier, amplitudeAdd: 45f, complexityAdd: 1),
+                    new SignalPart("AMP_Y", "\uc99d\ud3ed", "+45", new Color(1f, 0.75f, 0.15f), SignalPartKind.Amplifier, amplitudeAdd: 45f, complexityAdd: 1),
+                    new SignalPart("CLIP_X", "\ud074\ub9bd", "120", new Color(1f, 0.18f, 0.18f), SignalPartKind.Clipper, clipLimit: 120f, complexityAdd: 2),
+                    new SignalPart("CLIP_Y", "\ud074\ub9bd", "120", new Color(1f, 0.18f, 0.18f), SignalPartKind.Clipper, clipLimit: 120f, complexityAdd: 2),
+                    new SignalPart("ATT", "\uac10\uc1e0", "-35", new Color(1f, 0.45f, 0.1f), SignalPartKind.Attenuator, amplitudeAdd: -35f, complexityAdd: 1),
+                    new SignalPart("PH_30", "\ucf54\uc77c", "+30", new Color(0.2f, 0.85f, 1f), SignalPartKind.PhaseCoil, phaseDegreesAdd: 30f, complexityAdd: 1),
+                };
+            }
+
+            if (missionIndex == 1)
+            {
+                return new List<SignalPart>
+                {
+                    new SignalPart("OSC_1", "OSC", "1", new Color(0.85f, 0.85f, 0.85f), SignalPartKind.Oscillator, frequencyAdd: 1),
+                    new SignalPart("OSC_2", "OSC", "2", new Color(0.85f, 0.85f, 0.85f), SignalPartKind.Oscillator, frequencyAdd: 2),
+                    new SignalPart("PH_60", "\ucf54\uc77c", "+60", new Color(0.15f, 0.45f, 1f), SignalPartKind.PhaseCoil, phaseDegreesAdd: 60f, complexityAdd: 1),
+                    new SignalPart("INV", "\ubc18\uc804", "180", new Color(0.85f, 0.25f, 1f), SignalPartKind.Inverter, phaseDegreesAdd: 180f, complexityAdd: 1),
+                    new SignalPart("AMP", "\uc99d\ud3ed", "+45", new Color(1f, 0.75f, 0.15f), SignalPartKind.Amplifier, amplitudeAdd: 45f, complexityAdd: 1),
+                    new SignalPart("ATT", "\uac10\uc1e0", "-35", new Color(1f, 0.45f, 0.1f), SignalPartKind.Attenuator, amplitudeAdd: -35f, complexityAdd: 1),
+                };
+            }
+
+            return new List<SignalPart>
+            {
+                new SignalPart("OSC_1", "OSC", "1", new Color(0.85f, 0.85f, 0.85f), SignalPartKind.Oscillator, frequencyAdd: 1),
+                new SignalPart("OSC_1B", "OSC", "1", new Color(0.85f, 0.85f, 0.85f), SignalPartKind.Oscillator, frequencyAdd: 1),
+                new SignalPart("SPLIT", "\ubd84\ubc30", "2nd", new Color(0.25f, 1f, 0.55f), SignalPartKind.Splitter, harmonicAdd: 0.22f, complexityAdd: 2),
+                new SignalPart("ATT", "\uac10\uc1e0", "-35", new Color(1f, 0.45f, 0.1f), SignalPartKind.Attenuator, amplitudeAdd: -35f, complexityAdd: 1),
+                new SignalPart("AMP", "\uc99d\ud3ed", "+45", new Color(1f, 0.75f, 0.15f), SignalPartKind.Amplifier, amplitudeAdd: 45f, complexityAdd: 1),
+                new SignalPart("PH_30", "\ucf54\uc77c", "+30", new Color(0.2f, 0.85f, 1f), SignalPartKind.PhaseCoil, phaseDegreesAdd: 30f, complexityAdd: 1),
+                new SignalPart("CLIP", "\ud074\ub9bd", "120", new Color(1f, 0.18f, 0.18f), SignalPartKind.Clipper, clipLimit: 120f, complexityAdd: 2),
+            };
         }
 
         private List<SignalPart> MakeInventory()
@@ -722,6 +808,13 @@ namespace Project3.OscilloPatch
         {
             if (!repairButton.interactable)
             {
+                return;
+            }
+
+            if (currentMissionIndex < 2)
+            {
+                currentMissionIndex++;
+                BuildGame();
                 return;
             }
 

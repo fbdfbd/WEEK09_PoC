@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Project3.OscilloPatch
@@ -11,6 +12,9 @@ namespace Project3.OscilloPatch
         public float Noise { get; private set; }
         public float Harmonic { get; private set; }
         public int Complexity { get; private set; }
+        public IReadOnlyList<SignalPartKind> UsedKinds => usedKinds;
+
+        private readonly List<SignalPartKind> usedKinds = new List<SignalPartKind>();
 
         public bool HasOscillator => Frequency > 0;
 
@@ -27,6 +31,8 @@ namespace Project3.OscilloPatch
 
         public void Apply(SignalPart part)
         {
+            usedKinds.Add(part.Kind);
+
             switch (part.Kind)
             {
                 case SignalPartKind.Oscillator:

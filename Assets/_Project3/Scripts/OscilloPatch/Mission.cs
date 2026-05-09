@@ -11,17 +11,38 @@ namespace Project3.OscilloPatch
         public IReadOnlyList<MissionCondition> Conditions { get; }
 
         public Mission(string title, string description, IReadOnlyList<Vector2> targetNodes)
+            : this(title, description, 2, 3, targetNodes, 130f, 8)
+        {
+        }
+
+        public Mission(
+            string title,
+            string description,
+            int xFrequency,
+            int yFrequency,
+            IReadOnlyList<Vector2> targetNodes,
+            float maxAmplitude,
+            int maxComplexity,
+            params MissionCondition[] extraConditions)
         {
             Title = title;
             Description = description;
             TargetNodes = targetNodes;
-            Conditions = new MissionCondition[]
+
+            List<MissionCondition> conditions = new List<MissionCondition>
             {
-                new FrequencyRatioCondition(2, 3),
-                new TargetNodeCondition(targetNodes, 22f),
-                new MaxAmplitudeCondition(150f),
-                new ComplexityCondition(7),
+                new FrequencyRatioCondition(xFrequency, yFrequency),
             };
+
+            if (targetNodes.Count > 0)
+            {
+                conditions.Add(new TargetNodeCondition(targetNodes, 24f));
+            }
+
+            conditions.Add(new MaxAmplitudeCondition(maxAmplitude));
+            conditions.Add(new ComplexityCondition(maxComplexity));
+            conditions.AddRange(extraConditions);
+            Conditions = conditions;
         }
 
         private sealed class TargetNodeCondition : MissionCondition
@@ -29,7 +50,7 @@ namespace Project3.OscilloPatch
             private readonly IReadOnlyList<Vector2> targetNodes;
             private readonly float hitRadius;
 
-            public string Description => "\ud45c\uc2dc \uc811\uc810 2\uac1c \ud1b5\uacfc";
+            public string Description => $"표시 접점 {targetNodes.Count}개 통과";
 
             public TargetNodeCondition(IReadOnlyList<Vector2> targetNodes, float hitRadius)
             {
@@ -73,7 +94,7 @@ namespace Project3.OscilloPatch
         {
             private readonly float maxAmplitude;
 
-            public string Description => $"과전압 영역 접촉 금지";
+            public string Description => "과전압 영역 접촉 금지";
 
             public MaxAmplitudeCondition(float maxAmplitude)
             {
