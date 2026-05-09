@@ -5,7 +5,7 @@ namespace Project3.OscilloPatch
 {
     public sealed class LissajousPointMaker
     {
-        private const int PointCount = 360;
+        private const int PointCount = 960;
 
         public List<Vector2> MakePoints(SignalPair signals)
         {
@@ -16,14 +16,13 @@ namespace Project3.OscilloPatch
                 return points;
             }
 
-            int loopCount = Mathf.Max(signals.X.Frequency, signals.Y.Frequency);
-            float maxTime = Mathf.PI * 2f * loopCount;
+            float maxTime = Mathf.PI * 2f;
 
             for (int index = 0; index <= PointCount; index++)
             {
                 float time = index / (float)PointCount * maxTime;
-                float x = Mathf.Sin(signals.X.Frequency * time + signals.X.PhaseRadians) * signals.X.Amplitude;
-                float y = Mathf.Sin(signals.Y.Frequency * time + signals.Y.PhaseRadians) * signals.Y.Amplitude;
+                float x = signals.X.Evaluate(time);
+                float y = signals.Y.Evaluate(time);
                 points.Add(new Vector2(x, y));
             }
 

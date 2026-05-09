@@ -13,5 +13,6 @@ namespace Project3.OscilloPatch
 
         public bool IsValid => X.HasOscillator && Y.HasOscillator;
         public float MaxAmplitude => X.Amplitude > Y.Amplitude ? X.Amplitude : Y.Amplitude;
+        public int Complexity => X.Complexity + Y.Complexity;
     }
 }

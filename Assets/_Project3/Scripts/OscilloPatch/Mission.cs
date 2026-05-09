@@ -17,10 +17,10 @@ namespace Project3.OscilloPatch
             TargetNodes = targetNodes;
             Conditions = new MissionCondition[]
             {
-                new FrequencyRatioCondition(),
-                new TargetNodeCondition(targetNodes, 18f),
+                new FrequencyRatioCondition(2, 3),
+                new TargetNodeCondition(targetNodes, 22f),
                 new MaxAmplitudeCondition(150f),
-                new PhaseDifferenceCondition(),
+                new ComplexityCondition(7),
             };
         }
 
@@ -73,7 +73,7 @@ namespace Project3.OscilloPatch
         {
             private readonly float maxAmplitude;
 
-            public string Description => $"\ucd9c\ub825 {maxAmplitude:0} \uc774\ud558";
+            public string Description => $"과전압 영역 접촉 금지";
 
             public MaxAmplitudeCondition(float maxAmplitude)
             {
@@ -82,7 +82,37 @@ namespace Project3.OscilloPatch
 
             public bool IsMet(SignalPair signals, IReadOnlyList<Vector2> points)
             {
-                return signals.IsValid && signals.MaxAmplitude <= maxAmplitude;
+                if (!signals.IsValid)
+                {
+                    return false;
+                }
+
+                for (int index = 0; index < points.Count; index++)
+                {
+                    if (Mathf.Abs(points[index].x) > maxAmplitude || Mathf.Abs(points[index].y) > maxAmplitude)
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+        }
+
+        private sealed class ComplexityCondition : MissionCondition
+        {
+            private readonly int maxComplexity;
+
+            public string Description => $"신호 복잡도 {maxComplexity} 이하";
+
+            public ComplexityCondition(int maxComplexity)
+            {
+                this.maxComplexity = maxComplexity;
+            }
+
+            public bool IsMet(SignalPair signals, IReadOnlyList<Vector2> points)
+            {
+                return signals.IsValid && signals.Complexity <= maxComplexity;
             }
         }
     }

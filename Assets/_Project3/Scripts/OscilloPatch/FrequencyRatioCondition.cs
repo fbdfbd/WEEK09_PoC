@@ -5,7 +5,21 @@ namespace Project3.OscilloPatch
 {
     public sealed class FrequencyRatioCondition : MissionCondition
     {
-        public string Description => "1:2 \ud3d0\uace1\uc120 \uc0dd\uc131";
+        private readonly int xFrequency;
+        private readonly int yFrequency;
+
+        public string Description => $"{xFrequency}:{yFrequency} 폐곡선 생성";
+
+        public FrequencyRatioCondition()
+            : this(2, 3)
+        {
+        }
+
+        public FrequencyRatioCondition(int xFrequency, int yFrequency)
+        {
+            this.xFrequency = xFrequency;
+            this.yFrequency = yFrequency;
+        }
 
         public bool IsMet(SignalPair signals, IReadOnlyList<Vector2> points)
         {
@@ -14,8 +28,7 @@ namespace Project3.OscilloPatch
                 return false;
             }
 
-            return signals.X.Frequency == 1 && signals.Y.Frequency == 2
-                || signals.X.Frequency == 2 && signals.Y.Frequency == 1;
+            return signals.X.Frequency == xFrequency && signals.Y.Frequency == yFrequency;
         }
     }
 }

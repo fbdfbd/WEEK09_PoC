@@ -11,7 +11,7 @@ namespace Project3.OscilloPatch
     [ExecuteAlways]
     public sealed class OscilloPatchGame : MonoBehaviour
     {
-        private const int SlotCount = 3;
+        private const int SlotCount = 4;
         private const float ScopeScale = 0.022f;
         private const float PatchOpenY = 0f;
         private const float PatchClosedY = -200f;
@@ -27,6 +27,7 @@ namespace Project3.OscilloPatch
         private int selectedInventoryIndex = -1;
 
         private TMP_FontAsset font;
+        private LineRenderer lissajousGlowLine;
         private LineRenderer lissajousLine;
         private LineRenderer electronDot;
         private TMP_Text[] conditionTexts;
@@ -80,9 +81,9 @@ namespace Project3.OscilloPatch
             ClearGeneratedObjects();
             font = Resources.Load<TMP_FontAsset>("Fonts & Materials/KoPubWorld Batang Bold 2");
             mission = new Mission(
-                "\uc624\uc2e4\ub85c \ud328\uce58 : \uc2e0\ud638 \uc9c1\uc870\uae30",
-                "\uace0\uc7a5: \uc11c\ubcf4 \ubaa8\ud130 \ub3d9\uae30 \ubd88\ub7c9. \uc548\uc815\uc801\uc778 \ub9ac\uc0ac\uc8fc \uc81c\uc5b4 \uc2e0\ud638\ub97c \ubcf5\uad6c\ud558\uc138\uc694.",
-                new[] { new Vector2(90f, -90f), new Vector2(-90f, 90f) });
+                "서보 모터 동기 불량",
+                "제한된 부품으로 2:3 리사주 신호를 만들어 접점 2개를 통과시키세요.",
+                new[] { new Vector2(87f, 100f), new Vector2(-87f, 100f) });
 
             inventory = MakeInventory();
             PrepareCamera();
@@ -123,14 +124,16 @@ namespace Project3.OscilloPatch
         {
             return new List<SignalPart>
             {
-                new SignalPart("OSC_1", "OSC", "x1", new Color(0.85f, 0.85f, 0.85f), frequencyAdd: 1),
-                new SignalPart("OSC_2", "OSC", "x2", new Color(0.85f, 0.85f, 0.85f), frequencyAdd: 2),
-                new SignalPart("AMP_A", "\uc99d\ud3ed", "+50", new Color(1f, 0.75f, 0.15f), amplitudeAdd: 50f),
-                new SignalPart("AMP_B", "\uc99d\ud3ed", "+50", new Color(1f, 0.75f, 0.15f), amplitudeAdd: 50f),
-                new SignalPart("ATT", "\uac10\uc1e0", "-40", new Color(1f, 0.45f, 0.1f), amplitudeAdd: -40f),
-                new SignalPart("PH_90", "\ucf54\uc77c", "+90", new Color(0.2f, 0.85f, 1f), phaseDegreesAdd: 90f),
-                new SignalPart("PH_45", "\ucf54\uc77c", "+45", new Color(0.15f, 0.45f, 1f), phaseDegreesAdd: 45f),
-                new SignalPart("INV", "\ubc18\uc804", "180", new Color(0.85f, 0.25f, 1f), phaseDegreesAdd: 180f),
+                new SignalPart("OSC_1", "OSC", "1", new Color(0.85f, 0.85f, 0.85f), SignalPartKind.Oscillator, frequencyAdd: 1),
+                new SignalPart("OSC_2", "OSC", "2", new Color(0.85f, 0.85f, 0.85f), SignalPartKind.Oscillator, frequencyAdd: 2),
+                new SignalPart("OSC_3", "OSC", "3", new Color(0.85f, 0.85f, 0.85f), SignalPartKind.Oscillator, frequencyAdd: 3),
+                new SignalPart("AMP", "\uc99d\ud3ed", "+45", new Color(1f, 0.75f, 0.15f), SignalPartKind.Amplifier, amplitudeAdd: 45f, complexityAdd: 1),
+                new SignalPart("ATT", "\uac10\uc1e0", "-35", new Color(1f, 0.45f, 0.1f), SignalPartKind.Attenuator, amplitudeAdd: -35f, complexityAdd: 1),
+                new SignalPart("PH_30", "\ucf54\uc77c", "+30", new Color(0.2f, 0.85f, 1f), SignalPartKind.PhaseCoil, phaseDegreesAdd: 30f, complexityAdd: 1),
+                new SignalPart("PH_60", "\ucf54\uc77c", "+60", new Color(0.15f, 0.45f, 1f), SignalPartKind.PhaseCoil, phaseDegreesAdd: 60f, complexityAdd: 1),
+                new SignalPart("INV", "\ubc18\uc804", "180", new Color(0.85f, 0.25f, 1f), SignalPartKind.Inverter, phaseDegreesAdd: 180f, complexityAdd: 1),
+                new SignalPart("CLIP", "\ud074\ub9bd", "120", new Color(1f, 0.18f, 0.18f), SignalPartKind.Clipper, clipLimit: 120f, complexityAdd: 2),
+                new SignalPart("SPLIT", "\ubd84\ubc30", "2nd", new Color(0.25f, 1f, 0.55f), SignalPartKind.Splitter, harmonicAdd: 0.22f, complexityAdd: 2),
             };
         }
 
@@ -241,6 +244,7 @@ namespace Project3.OscilloPatch
             CreateGrid();
             CreateDangerBox();
             CreateTargetNodes();
+            lissajousGlowLine = CreateLine("Lissajous Glow", 0.12f, new Color(0f, 0.95f, 1f, 0.22f));
             lissajousLine = CreateLine("Lissajous Line", 0.035f, new Color(0f, 0.75f, 1f));
             electronDot = CreateLine("Electron Dot", 0.12f, Color.white);
             electronDot.loop = true;
@@ -681,11 +685,13 @@ namespace Project3.OscilloPatch
 
         private void DrawSignal(IReadOnlyList<Vector2> points)
         {
+            lissajousGlowLine.positionCount = points.Count;
             lissajousLine.positionCount = points.Count;
 
             for (int index = 0; index < points.Count; index++)
             {
                 Vector2 point = points[index] * ScopeScale;
+                lissajousGlowLine.SetPosition(index, new Vector3(point.x, point.y, 0f));
                 lissajousLine.SetPosition(index, new Vector3(point.x, point.y, 0f));
             }
         }
@@ -700,8 +706,8 @@ namespace Project3.OscilloPatch
 
             electronTime += Time.deltaTime * 1.9f;
             Vector2 center = new Vector2(
-                Mathf.Sin(signals.X.Frequency * electronTime + signals.X.PhaseRadians) * signals.X.Amplitude,
-                Mathf.Sin(signals.Y.Frequency * electronTime + signals.Y.PhaseRadians) * signals.Y.Amplitude) * ScopeScale;
+                signals.X.Evaluate(electronTime),
+                signals.Y.Evaluate(electronTime)) * ScopeScale;
 
             electronDot.positionCount = 18;
             for (int index = 0; index < electronDot.positionCount; index++)
