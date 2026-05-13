@@ -6,6 +6,7 @@ public class TurnEndSystem
         MoveSkillSlots(state);
 
         state.LastTurnUsedNumberCount = state.UsedNumbersThisTurn.Count;
+        state.LastTurnUsedSkillCount = state.UsedSkillCardsThisTurn.Count;
         state.UsedNumbersThisTurn.Clear();
         state.UsedNumberCardsThisTurn.Clear();
         state.UsedSkillCardsThisTurn.Clear();

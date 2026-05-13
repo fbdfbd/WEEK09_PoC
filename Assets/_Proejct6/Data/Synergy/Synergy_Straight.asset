@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _id: straight
   _displayName: "\uC5F0\uC18D"
+  _description: "\uC5F0\uC18D \uC22B\uC790 3\uAC1C: \uC801\uC5D0\uAC8C 4 \uD53C\uD574, \uBC29\uC5B4 6"
   _conditions:
   - {fileID: 11400000, guid: 659ddfbe34374f98954ef34f45f79c4e, type: 2}
   _effects:

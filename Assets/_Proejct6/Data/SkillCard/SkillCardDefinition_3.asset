@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillCardDefinition
   _id: skill_second_wind
   _displayName: 회복 호흡
-  _description: 짝수 숫자 1개로 체력을 회복합니다.
+  _description: 짝수 숫자 1개로 체력을 1+숫자 회복합니다.
   _role: 2
   _numberRequirementType: 5
   _requiredNumber: 0

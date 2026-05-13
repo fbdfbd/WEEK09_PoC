@@ -8,7 +8,17 @@ public class DamageEffect : CardEffect
 
     public override void Apply(BattleContext context, SkillResolveData data)
     {
-        int damage = _baseDamage + data.NumberSum * _numberMultiplier;
+        int damage = CalculateDamage(data);
         context.Enemy.TakeDamage(damage);
+    }
+
+    public int CalculateDamage(SkillResolveData data)
+    {
+        if (data == null)
+        {
+            return 0;
+        }
+
+        return _baseDamage + data.NumberSum * _numberMultiplier;
     }
 }

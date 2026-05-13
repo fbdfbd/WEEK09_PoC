@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillCardDefinition
   _id: skill_exact_focus
   _displayName: 정밀 집중
-  _description: 숫자 5로 체력을 크게 회복합니다.
+  _description: 숫자 5로 체력을 10 회복합니다.
   _role: 2
   _numberRequirementType: 3
   _requiredNumber: 5

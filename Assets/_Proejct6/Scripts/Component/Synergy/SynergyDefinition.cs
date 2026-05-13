@@ -6,11 +6,13 @@ public class SynergyDefinition : ScriptableObject
 {
     [SerializeField] private string _id;
     [SerializeField] private string _displayName;
+    [SerializeField] private string _description;
     [SerializeField] private List<SynergyCondition> _conditions;
     [SerializeField] private List<SynergyEffect> _effects;
 
     public string Id => _id;
     public string DisplayName => _displayName;
+    public string Description => _description;
 
     public bool CanActivate(BattleContext context)
     {

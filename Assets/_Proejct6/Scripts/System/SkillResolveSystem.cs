@@ -45,8 +45,45 @@ public class SkillResolveSystem
 
         if (timing == EffectTiming.Normal)
         {
+            context.State.Log.Add(BuildPlayerSkillLog(skill, data));
             RegisterUsedCards(context.State, slot, data);
         }
+    }
+
+    private string BuildPlayerSkillLog(SkillCardDefinition skill, SkillResolveData data)
+    {
+        int damage = GetDamageAmount(skill, data);
+        string log = "플레이어가 " + skill.DisplayName + "을 발동했습니다.";
+
+        if (damage > 0)
+        {
+            log += " 피해 " + damage;
+        }
+
+        return log;
+    }
+
+    private int GetDamageAmount(SkillCardDefinition skill, SkillResolveData data)
+    {
+        int damage = 0;
+
+        if (skill.Effects == null)
+        {
+            return damage;
+        }
+
+        for (int i = 0; i < skill.Effects.Count; i++)
+        {
+            DamageEffect damageEffect = skill.Effects[i] as DamageEffect;
+            if (damageEffect == null || damageEffect.Timing != EffectTiming.Normal)
+            {
+                continue;
+            }
+
+            damage += damageEffect.CalculateDamage(data);
+        }
+
+        return damage;
     }
 
     private void RegisterUsedCards(BattleState state, SkillSlotState slot, SkillResolveData data)

@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _id: overheat
   _displayName: "\uACFC\uC5F4"
+  _description: "\uC22B\uC790 4\uC7A5 \uC774\uC0C1 \uC0AC\uC6A9: \uC801\uC5D0\uAC8C 8 \uD53C\uD574"
   _conditions:
   - {fileID: 11400000, guid: 8ab4b162e8d442b491403dafb7d62b0e, type: 2}
   _effects:

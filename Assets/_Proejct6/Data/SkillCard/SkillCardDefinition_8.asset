@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillCardDefinition
   _id: skill_heavy_swing
   _displayName: 묵직한 일격
-  _description: 6 이상 숫자 1개로 큰 피해를 줍니다.
+  _description: 6 이상 숫자 1개로 7+숫자x2 피해를 줍니다.
   _role: 4
   _numberRequirementType: 1
   _requiredNumber: 6

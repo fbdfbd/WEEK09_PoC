@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class BattleActorStatusView : MonoBehaviour
 {
+    private const string BlockLabel = "\uBC29\uC5B4 ";
+
     [SerializeField] private TMP_Text _nameText;
     [SerializeField] private TMP_Text _hpText;
     [SerializeField] private TMP_Text _blockText;
@@ -37,7 +39,13 @@ public class BattleActorStatusView : MonoBehaviour
     {
         if (_hpText != null)
         {
-            _hpText.text = actor.Hp + " / " + actor.MaxHp;
+            string hpText = actor.Hp + " / " + actor.MaxHp;
+            if (_blockText == null && actor.Block > 0)
+            {
+                hpText += "  " + BlockLabel + actor.Block;
+            }
+
+            _hpText.text = hpText;
         }
     }
 
@@ -54,7 +62,7 @@ public class BattleActorStatusView : MonoBehaviour
             return;
         }
 
-        _blockText.text = "방어 " + actor.Block;
+        _blockText.text = BlockLabel + actor.Block;
     }
 
     private void RefreshSlider(BattleActorState actor)

@@ -12,6 +12,9 @@ public class Project6BattlePresenter : MonoBehaviour
     [SerializeField] private OrderNumberSlotView _orderNumberSlotView;
     [SerializeField] private BattleActorStatusView _playerStatusView;
     [SerializeField] private BattleActorStatusView _enemyStatusView;
+    [SerializeField] private BattleLogView _battleLogView;
+    [SerializeField] private SynergyPopupView _synergyPopupView;
+    [SerializeField] private BattleResultPanelView _resultPanelView;
     [SerializeField] private int _playerMaxHp = 50;
     [SerializeField] private int _enemyMaxHp = 50;
     [SerializeField] private int _skillDrawCount = 3;
@@ -23,8 +26,8 @@ public class Project6BattlePresenter : MonoBehaviour
 
     private void Awake()
     {
-        _battleFlow = new BattleFlow();
-        _battleFlow.BattleChanged += RefreshViews;
+        FindResultPanelViewIfNeeded();
+        CreateBattleFlow();
 
         if (_numberCardHandView != null)
         {
@@ -40,21 +43,22 @@ public class Project6BattlePresenter : MonoBehaviour
         {
             _orderNumberSlotView.Clicked += OnOrderNumberSlotClicked;
         }
+
+        if (_resultPanelView != null)
+        {
+            _resultPanelView.RestartClicked += OnRestartClicked;
+            _resultPanelView.QuitClicked += OnQuitClicked;
+        }
     }
 
     private void Start()
     {
-        _battleFlow.Setup(_numCardPool, _skillCardPool, _playerMaxHp, _enemyMaxHp, _skillDrawCount);
-        _battleFlow.EquipSynergies(_startingSynergies);
-        _battleFlow.StartTurn();
+        StartBattle();
     }
 
     private void OnDestroy()
     {
-        if (_battleFlow != null)
-        {
-            _battleFlow.BattleChanged -= RefreshViews;
-        }
+        ReleaseBattleFlow();
 
         if (_numberCardHandView != null)
         {
@@ -70,6 +74,12 @@ public class Project6BattlePresenter : MonoBehaviour
         {
             _orderNumberSlotView.Clicked -= OnOrderNumberSlotClicked;
         }
+
+        if (_resultPanelView != null)
+        {
+            _resultPanelView.RestartClicked -= OnRestartClicked;
+            _resultPanelView.QuitClicked -= OnQuitClicked;
+        }
     }
 
     public void PlaceSkillCard(CardInstance skillCard)
@@ -83,6 +93,11 @@ public class Project6BattlePresenter : MonoBehaviour
         if (executed == false)
         {
             RefreshViews();
+            return;
+        }
+
+        if (_battleFlow.State.IsBattleFinished)
+        {
             return;
         }
 
@@ -130,6 +145,90 @@ public class Project6BattlePresenter : MonoBehaviour
         {
             _enemyStatusView.Show(_battleFlow.State.Enemy);
         }
+
+        if (_battleLogView != null)
+        {
+            _battleLogView.Show(_battleFlow.State.Log.Entries);
+        }
+
+        ShowPendingSynergyPopups();
+    }
+
+    private void ShowPendingSynergyPopups()
+    {
+        if (_synergyPopupView == null)
+        {
+            _battleFlow.State.PendingSynergyPopups.Clear();
+            return;
+        }
+
+        for (int i = 0; i < _battleFlow.State.PendingSynergyPopups.Count; i++)
+        {
+            _synergyPopupView.Enqueue(_battleFlow.State.PendingSynergyPopups[i]);
+        }
+
+        _battleFlow.State.PendingSynergyPopups.Clear();
+    }
+
+    private void FindResultPanelViewIfNeeded()
+    {
+        if (_resultPanelView == null)
+        {
+            _resultPanelView = FindFirstObjectByType<BattleResultPanelView>(FindObjectsInactive.Include);
+        }
+    }
+
+    private void CreateBattleFlow()
+    {
+        _battleFlow = new BattleFlow();
+        _battleFlow.BattleChanged += RefreshViews;
+        _battleFlow.BattleFinished += OnBattleFinished;
+    }
+
+    private void ReleaseBattleFlow()
+    {
+        if (_battleFlow == null)
+        {
+            return;
+        }
+
+        _battleFlow.BattleChanged -= RefreshViews;
+        _battleFlow.BattleFinished -= OnBattleFinished;
+        _battleFlow = null;
+    }
+
+    private void StartBattle()
+    {
+        if (_resultPanelView != null)
+        {
+            _resultPanelView.Hide();
+        }
+
+        _battleFlow.Setup(_numCardPool, _skillCardPool, _playerMaxHp, _enemyMaxHp, _skillDrawCount);
+        _battleFlow.EquipSynergies(_startingSynergies);
+        _battleFlow.StartTurn();
+    }
+
+    private void OnBattleFinished(BattleResult result)
+    {
+        RefreshViews();
+
+        if (_resultPanelView != null)
+        {
+            _resultPanelView.Show(result);
+        }
+    }
+
+    private void OnRestartClicked()
+    {
+        ReleaseBattleFlow();
+        CreateBattleFlow();
+        StartBattle();
+    }
+
+    private void OnQuitClicked()
+    {
+        Application.Quit();
     }
 
     private void OnNumberCardDropped(CardInstance numberCard, PointerEventData eventData)

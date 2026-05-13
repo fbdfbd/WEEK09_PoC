@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillCardDefinition
   _id: skill_low_stance
   _displayName: 낮은 자세
-  _description: 4 이하 숫자 1개로 방어도를 얻습니다.
+  _description: 4 이하 숫자 1개로 6+숫자 방어도를 얻습니다.
   _role: 1
   _numberRequirementType: 2
   _requiredNumber: 4

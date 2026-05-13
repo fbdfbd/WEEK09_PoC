@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillCardDefinition
   _id: skill_double_tap
   _displayName: 연속 타격
-  _description: 숫자 2개로 피해를 줍니다.
+  _description: 숫자 2개로 4+합계 피해를 줍니다.
   _role: 0
   _numberRequirementType: 0
   _requiredNumber: 0

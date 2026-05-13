@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _id: temperance
   _displayName: "\uC808\uC81C"
+  _description: "\uC0AC\uC6A9 \uC22B\uC790 \uD569 15 \uC774\uD558: \uB2E4\uC74C \uD134 \uC22B\uC790 +1"
   _conditions:
   - {fileID: 11400000, guid: aae2b540cb334f22b943c9373346d4b4, type: 2}
   _effects:

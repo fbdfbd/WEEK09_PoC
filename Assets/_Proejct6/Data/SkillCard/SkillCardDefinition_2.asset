@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillCardDefinition
   _id: skill_guard_up
   _displayName: 방어 태세
-  _description: 3 이상 숫자 1개로 방어도를 얻습니다.
+  _description: 3 이상 숫자 1개로 3+숫자 방어도를 얻습니다.
   _role: 1
   _numberRequirementType: 1
   _requiredNumber: 3

@@ -13,6 +13,8 @@ public class SynergySystem
 
             if (synergy.CanActivate(context))
             {
+                context.State.Log.Add("시너지 발동: " + synergy.DisplayName);
+                context.State.PendingSynergyPopups.Add(new SynergyPopupRequest(synergy.DisplayName, synergy.Description));
                 synergy.Apply(context);
             }
         }

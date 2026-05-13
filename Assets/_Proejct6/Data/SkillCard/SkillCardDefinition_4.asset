@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillCardDefinition
   _id: skill_odd_thrust
   _displayName: 홀수 찌르기
-  _description: 홀수 숫자 1개로 강한 피해를 줍니다.
+  _description: 홀수 숫자 1개로 3+숫자x2 피해를 줍니다.
   _role: 0
   _numberRequirementType: 4
   _requiredNumber: 0

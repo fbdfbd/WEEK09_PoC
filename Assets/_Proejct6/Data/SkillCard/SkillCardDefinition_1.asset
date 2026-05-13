@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillCardDefinition
   _id: skill_quick_cut
   _displayName: 빠른 베기
-  _description: 숫자 1개로 피해를 줍니다.
+  _description: 숫자 1개로 2+숫자 피해를 줍니다.
   _role: 0
   _numberRequirementType: 0
   _requiredNumber: 0

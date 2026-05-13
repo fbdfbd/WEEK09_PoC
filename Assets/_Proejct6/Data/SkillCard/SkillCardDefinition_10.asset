@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillCardDefinition
   _id: skill_pulse_strike
   _displayName: 파동 타격
-  _description: 숫자 2개로 합계에 비례한 피해를 줍니다.
+  _description: 숫자 2개로 1+합계x3 피해를 줍니다.
   _role: 5
   _numberRequirementType: 0
   _requiredNumber: 0

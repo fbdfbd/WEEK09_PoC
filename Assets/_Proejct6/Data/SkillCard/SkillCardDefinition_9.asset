@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillCardDefinition
   _id: skill_brace_pair
   _displayName: 짝수 방벽
-  _description: 짝수 숫자 2개로 높은 방어도를 얻습니다.
+  _description: 짝수 숫자 2개로 4+합계x2 방어도를 얻습니다.
   _role: 1
   _numberRequirementType: 5
   _requiredNumber: 0
