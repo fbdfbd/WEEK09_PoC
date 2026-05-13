@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f04e3a4fca153c34dacf2776329f2dae, type: 3}
+  m_Name: SkillCardPool
+  m_EditorClassIdentifier: Assembly-CSharp::SkillCardPool
+  _cards:
+  - {fileID: 11400000, guid: 93875ef63e82c2348bb897503713f30a, type: 2}
+  - {fileID: 11400000, guid: 78dfd2c2b3104db58cb41aa7403f4acc, type: 2}
+  - {fileID: 11400000, guid: 427d4992c92a406499915101d04d3a5d, type: 2}
+  - {fileID: 11400000, guid: cfb4b887bcd5432bb92fb0d21c95523d, type: 2}
+  - {fileID: 11400000, guid: a502d861f3de45aebe7758fb7d451430, type: 2}
+  - {fileID: 11400000, guid: c9d4ccbad7344546a25a56cdde8d216a, type: 2}
+  - {fileID: 11400000, guid: 72a71b2243e44ff7a5197bad295b4ee5, type: 2}
+  - {fileID: 11400000, guid: 87244206e9704b0fb1a357fb19e4d5c7, type: 2}
+  - {fileID: 11400000, guid: 68c2e4a4a5a943a4bbe95d87b5899ae3, type: 2}
+  - {fileID: 11400000, guid: c0078f3f9e774af692c764e0122f41de, type: 2}

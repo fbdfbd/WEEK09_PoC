@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b5e278f158fd384f9960e0ca85c5957, type: 3}
+  m_Name: SkillCardDefinition_4
+  m_EditorClassIdentifier: Assembly-CSharp::SkillCardDefinition
+  _id: skill_odd_thrust
+  _displayName: 홀수 찌르기
+  _description: 홀수 숫자 1개로 강한 피해를 줍니다.
+  _role: 0
+  _numberRequirementType: 4
+  _requiredNumber: 0
+  _requiredCount: 1
+  _effects:
+  - {fileID: 11400000, guid: 151576630ff949ddaf0b39a9fe993205, type: 2}

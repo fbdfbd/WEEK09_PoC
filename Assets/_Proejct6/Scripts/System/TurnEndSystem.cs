@@ -36,21 +36,33 @@ public class TurnEndSystem
         for (int i = 0; i < state.SkillSlots.Count; i++)
         {
             SkillSlotState slot = state.SkillSlots[i];
+            bool wasUsed = state.UsedSkillCardsThisTurn.Contains(slot.SkillCard);
 
             for (int numberIndex = 0; numberIndex < slot.NumberCards.Count; numberIndex++)
             {
                 CardInstance numberCard = slot.NumberCards[numberIndex];
-                NumCardDefinition definition = BattleState.GetNumDefinition(numberCard);
 
-                if (definition != null)
+                if (wasUsed)
                 {
-                    RegisterUsedNumber(state, numberCard, definition.Number);
-                }
+                    NumCardDefinition definition = BattleState.GetNumDefinition(numberCard);
+                    if (definition != null)
+                    {
+                        RegisterUsedNumber(state, numberCard, definition.Number);
+                    }
 
-                state.NumberDiscard.Add(numberCard);
+                    state.NumberDiscard.Add(numberCard);
+                }
+                else
+                {
+                    state.NumberHand.Add(numberCard);
+                }
             }
 
-            state.SkillDiscard.Add(slot.SkillCard);
+            if (wasUsed)
+            {
+                state.SkillHand.Remove(slot.SkillCard);
+                state.SkillDiscard.Add(slot.SkillCard);
+            }
         }
     }
 

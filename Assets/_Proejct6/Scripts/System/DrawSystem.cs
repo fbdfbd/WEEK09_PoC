@@ -6,9 +6,19 @@ public class DrawSystem
         DrawCards(state.NumberDeck, state.NumberHand, state.NumberDiscard, drawCount);
     }
 
+    public void DrawNumber(BattleState state)
+    {
+        DrawCards(state.NumberDeck, state.NumberHand, state.NumberDiscard, 1);
+    }
+
     public void DrawSkills(BattleState state, int drawCount)
     {
         DrawCards(state.SkillDeck, state.SkillHand, state.SkillDiscard, drawCount);
+    }
+
+    public void DrawSkill(BattleState state)
+    {
+        DrawCards(state.SkillDeck, state.SkillHand, state.SkillDiscard, 1);
     }
 
     private void DrawCards(CardPile deck, CardPile hand, CardPile discard, int drawCount)

@@ -19,10 +19,13 @@ public class BattleState
     public List<int> UsedNumbersThisTurn { get; private set; } = new List<int>();
     public List<CardInstance> UsedNumberCardsThisTurn { get; private set; } = new List<CardInstance>();
     public List<CardInstance> UsedSkillCardsThisTurn { get; private set; } = new List<CardInstance>();
+    public List<SynergyDefinition> EquippedSynergies { get; private set; } = new List<SynergyDefinition>();
 
     public int TurnNumber { get; set; }
     public int LastTurnUsedNumberCount { get; set; }
+    public int BonusNumberDrawNextTurn { get; set; }
     public bool IsFirstTurn { get; set; } = true;
+    public bool HasUsedExtraDrawThisTurn { get; set; }
 
     public int GetOrderValue()
     {
@@ -42,7 +45,7 @@ public class BattleState
             return 5;
         }
 
-        int drawCount = LastTurnUsedNumberCount + 1;
+        int drawCount = LastTurnUsedNumberCount + 1 + BonusNumberDrawNextTurn;
 
         if (drawCount < 2)
         {

@@ -2,6 +2,22 @@ using System.Collections.Generic;
 
 public class NumberRequirementChecker
 {
+    public bool CanUseNumber(SkillCardDefinition skill, CardInstance numberCard)
+    {
+        if (skill == null)
+        {
+            return false;
+        }
+
+        NumCardDefinition number = BattleState.GetNumDefinition(numberCard);
+        if (number == null)
+        {
+            return false;
+        }
+
+        return CanUseNumberValue(skill, number.Number);
+    }
+
     public bool CanUseNumbers(SkillCardDefinition skill, List<CardInstance> numberCards)
     {
         if (skill == null || numberCards == null)
@@ -22,7 +38,7 @@ public class NumberRequirementChecker
                 return false;
             }
 
-            if (CanUseNumber(skill, number.Number) == false)
+            if (CanUseNumberValue(skill, number.Number) == false)
             {
                 return false;
             }
@@ -31,7 +47,7 @@ public class NumberRequirementChecker
         return true;
     }
 
-    private bool CanUseNumber(SkillCardDefinition skill, int number)
+    private bool CanUseNumberValue(SkillCardDefinition skill, int number)
     {
         if (skill.NumberRequirementType == NumberRequirementType.Any)
         {

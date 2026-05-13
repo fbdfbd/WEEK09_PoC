@@ -24,4 +24,16 @@ public class SkillSlotState
     {
         return NumberCards.Remove(numberCard);
     }
+
+    public CardInstance ReplaceNumberAt(int index, CardInstance newNumberCard)
+    {
+        if (index < 0 || index >= NumberCards.Count)
+        {
+            return null;
+        }
+
+        CardInstance oldNumberCard = NumberCards[index];
+        NumberCards[index] = newNumberCard;
+        return oldNumberCard;
+    }
 }

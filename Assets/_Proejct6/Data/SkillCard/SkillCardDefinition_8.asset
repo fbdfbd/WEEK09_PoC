@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b5e278f158fd384f9960e0ca85c5957, type: 3}
+  m_Name: SkillCardDefinition_8
+  m_EditorClassIdentifier: Assembly-CSharp::SkillCardDefinition
+  _id: skill_heavy_swing
+  _displayName: 묵직한 일격
+  _description: 6 이상 숫자 1개로 큰 피해를 줍니다.
+  _role: 4
+  _numberRequirementType: 1
+  _requiredNumber: 6
+  _requiredCount: 1
+  _effects:
+  - {fileID: 11400000, guid: e451e861ea9843ee9455628b71c5ecd5, type: 2}

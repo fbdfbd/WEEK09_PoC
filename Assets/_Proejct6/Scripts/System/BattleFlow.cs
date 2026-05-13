@@ -11,6 +11,7 @@ public class BattleFlow
     private readonly DrawSystem drawSystem = new DrawSystem();
     private readonly PlacementSystem placementSystem = new PlacementSystem();
     private readonly SkillResolveSystem skillResolveSystem = new SkillResolveSystem();
+    private readonly SynergySystem synergySystem = new SynergySystem();
     private readonly TurnEndSystem turnEndSystem = new TurnEndSystem();
 
     private int skillDrawCount = 3;
@@ -45,6 +46,27 @@ public class BattleFlow
         NotifyBattleChanged();
     }
 
+    public void EquipSynergies(IReadOnlyList<SynergyDefinition> synergies)
+    {
+        state.EquippedSynergies.Clear();
+
+        if (synergies == null)
+        {
+            NotifyBattleChanged();
+            return;
+        }
+
+        for (int i = 0; i < synergies.Count; i++)
+        {
+            if (synergies[i] != null)
+            {
+                state.EquippedSynergies.Add(synergies[i]);
+            }
+        }
+
+        NotifyBattleChanged();
+    }
+
     public void Setup(
         NumCardPool numCardPool,
         SkillCardPool skillCardPool,
@@ -66,9 +88,11 @@ public class BattleFlow
     {
         state.Player.ResetBlock();
         state.Enemy.ResetBlock();
+        state.HasUsedExtraDrawThisTurn = false;
 
         drawSystem.DrawNumbers(state);
         drawSystem.DrawSkills(state, skillDrawCount);
+        state.BonusNumberDrawNextTurn = 0;
 
         NotifyTurnStarted();
         NotifyBattleChanged();
@@ -79,6 +103,7 @@ public class BattleFlow
         skillResolveSystem.ResolveBeforeEnemyAttack(context);
         skillResolveSystem.ResolveNormal(context);
         skillResolveSystem.ResolveAfterSkillResolve(context);
+        synergySystem.Resolve(context);
 
         NotifyTurnExecuted();
 
@@ -88,11 +113,58 @@ public class BattleFlow
         NotifyBattleChanged();
     }
 
+    public bool CanExecuteTurn()
+    {
+        return state.OrderSlotNumber != null;
+    }
+
+    public bool TryExecuteTurn()
+    {
+        if (CanExecuteTurn() == false)
+        {
+            return false;
+        }
+
+        ExecuteTurn();
+        return true;
+    }
+
     public bool PlaceNumberInOrderSlot(CardInstance numberCard)
     {
         bool result = placementSystem.PlaceNumberInOrderSlot(state, numberCard);
         NotifyBattleChanged();
         return result;
+    }
+
+    public bool DrawOneNumberCard()
+    {
+        if (state.HasUsedExtraDrawThisTurn)
+        {
+            return false;
+        }
+
+        drawSystem.DrawNumber(state);
+        state.HasUsedExtraDrawThisTurn = true;
+        NotifyBattleChanged();
+        return true;
+    }
+
+    public bool DrawOneSkillCard()
+    {
+        if (state.HasUsedExtraDrawThisTurn)
+        {
+            return false;
+        }
+
+        drawSystem.DrawSkill(state);
+        state.HasUsedExtraDrawThisTurn = true;
+        NotifyBattleChanged();
+        return true;
+    }
+
+    public bool CanUseExtraDraw()
+    {
+        return state.HasUsedExtraDrawThisTurn == false;
     }
 
     public bool ReturnOrderSlotNumber()
@@ -116,9 +188,23 @@ public class BattleFlow
         return result;
     }
 
+    public bool PlaceOrSwapNumberOnSkill(CardInstance skillCard, CardInstance numberCard)
+    {
+        bool result = placementSystem.PlaceOrSwapNumberOnSkill(state, skillCard, numberCard);
+        NotifyBattleChanged();
+        return result;
+    }
+
     public bool ReturnNumberFromSkill(CardInstance skillCard, CardInstance numberCard)
     {
         bool result = placementSystem.ReturnNumberFromSkill(state, skillCard, numberCard);
+        NotifyBattleChanged();
+        return result;
+    }
+
+    public bool ReturnAllNumbersFromSkill(CardInstance skillCard)
+    {
+        bool result = placementSystem.ReturnAllNumbersFromSkill(state, skillCard);
         NotifyBattleChanged();
         return result;
     }
