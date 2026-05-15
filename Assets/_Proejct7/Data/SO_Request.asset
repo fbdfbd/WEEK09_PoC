@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60e4b598349812044bbf819b53287cad, type: 3}
+  m_Name: SO_Request
+  m_EditorClassIdentifier: Assembly-CSharp::SO_Request
+  _id: test
+  _title: "\uD14C\uC2A4\uD2B8\uC6A9 \uD0C0\uC774\uD2C0 \uCC98\uB9AC"
+  _body: "\uBC14\uB5141\n\uBC14\uB5142\n\uBC14\uB5143\n\uBC14\uB5144\n\uBC14\uB5145\n\uBC14\uB5146"
+  _summary: "\uC774\uB984\n\uC774\uB984\n\uC774\uB984"
+  _tags: []
