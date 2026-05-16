@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3aff470ce5c10b44998b025d8458a652, type: 3}
+  m_Name: SO_Order_fried_rice
+  m_EditorClassIdentifier: Assembly-CSharp::Project8.Domain.Data.SO_OrderDefinition
+  _id: fried_rice
+  _displayName: "\uBCF6\uC74C\uBC25"
+  _foodType: 1
+  _spicyRange:
+    Min: 40
+    Max: 90
+  _sweetRange:
+    Min: 20
+    Max: 70
+  _thickRange:
+    Min: 85
+    Max: 100
+  _patienceSeconds: 40
+  _baseScore: 100

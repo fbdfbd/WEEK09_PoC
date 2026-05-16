@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2581a90c6629e1c429109a12b7ceceab, type: 3}
+  m_Name: SO_GameConfig
+  m_EditorClassIdentifier: Assembly-CSharp::Project8.Domain.Data.SO_GameConfig
+  _initialTaste:
+    Spicy: 40
+    Sweet: 40
+    Thick: 40
+  _initialVolume: 60
+  _maxVolume: 100
+  _initialFoodType: 0
+  _thickIncreasePerSecond: 2
+  _volumeDecreasePerSecond: 0.5
+  _friedRiceThreshold: 85
+  _burnPenaltyThreshold: 95
+  _maxActiveOrders: 3
+  _orderSpawnIntervalMin: 8
+  _orderSpawnIntervalMax: 12
+  _gameSeconds: 120
+  _servingVolumeCost: 20
+  _minimumServingVolume: 20
