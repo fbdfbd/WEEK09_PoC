@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7bb1ebc30907d394cb7e06f6fdbbbfc0, type: 3}
+  m_Name: Target_CensorshipAgency
+  m_EditorClassIdentifier: 
+  id: target_censorship_agency
+  displayName: "검열 기관"
+  description: "민감 정보 노출이 낮고 위험한 증거가 흐려진 보고서를 선호한다. 정보 보존이 높을수록 부담으로 본다."
+  kind: 1
+  initialReputation: 0
+  scoringProfile:
+    informationValueWeight: 0
+    integrityWeight: -1
+    exposureWeight: -4
+    exposureReductionWeight: 8
+    distortionPenaltyWeight: 1
+    fullMaskPenaltyWeight: 0

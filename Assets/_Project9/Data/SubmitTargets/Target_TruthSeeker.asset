@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7bb1ebc30907d394cb7e06f6fdbbbfc0, type: 3}
+  m_Name: Target_TruthSeeker
+  m_EditorClassIdentifier: 
+  id: target_truth_seeker
+  displayName: "진실 추구자"
+  description: "핵심 정보와 증거가 최대한 원문에 가깝게 남아있는 보고서를 선호한다. 왜곡과 전체 마스킹에 특히 민감하다."
+  kind: 0
+  initialReputation: 0
+  scoringProfile:
+    informationValueWeight: 2
+    integrityWeight: 2
+    exposureWeight: 1
+    exposureReductionWeight: -2
+    distortionPenaltyWeight: 5
+    fullMaskPenaltyWeight: 5
