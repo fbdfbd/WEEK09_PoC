@@ -36,15 +36,12 @@ public sealed class RequestDaySystem
     private List<RequestData> BuildActiveRequests(int day)
     {
         var followUps = BuildFollowUpRequests();
-        var remainingSlots = _database.RequestsPerDay - followUps.Count;
-
-        var baseRequests = remainingSlots > 0
-            ? _requestStore.GetBaseRequestsForDay(day).Take(remainingSlots)
-            : Enumerable.Empty<RequestData>();
+        var baseRequests = _requestStore
+            .GetBaseRequestsForDay(day)
+            .Take(_database.RequestsPerDay);
 
         var activeRequests = followUps
             .Concat(baseRequests)
-            .Take(_database.RequestsPerDay)
             .ToList();
 
         foreach (var request in activeRequests.Where(request => request.IsFollowUp))

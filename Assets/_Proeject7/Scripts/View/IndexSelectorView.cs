@@ -11,67 +11,115 @@ public sealed class IndexSelectorView : MonoBehaviour
     [SerializeField] private Color _normalColor = Color.white;
     [SerializeField] private Color _selectedColor = new(1f, 0.72f, 0.18f);
 
+    private readonly List<Button> _buttonPool = new();
+    private readonly List<TextMeshProUGUI> _labelPool = new();
+
+    private Button _templateButton;
+    private Transform _buttonParent;
+
     public event Action<int> OnIndexClicked;
 
     private void Awake()
     {
-        AutoBindChildButtons();
+        CacheSceneButtons();
+        SetCount(0);
+    }
 
-        for (var i = 0; i < _buttons.Length; i++)
+    private void CacheSceneButtons()
+    {
+        var buttons = new List<Button>();
+
+        var childButtons = GetComponentsInChildren<Button>(true);
+        AddButtons(buttons, childButtons);
+        AddButtons(buttons, _buttons);
+
+        if (buttons.Count == 0)
         {
-            var index = i;
-            _buttons[i].onClick.AddListener(() => OnIndexClicked?.Invoke(index));
+            enabled = false;
+            return;
+        }
+
+        _templateButton = buttons[0];
+        _buttonParent = _templateButton.transform.parent;
+
+        foreach (var button in buttons)
+            AddButtonToPool(button);
+
+        RefreshSerializedCache();
+    }
+
+    private void AddButtons(List<Button> target, IEnumerable<Button> source)
+    {
+        if (source == null)
+            return;
+
+        foreach (var button in source)
+        {
+            if (button != null && button.transform.IsChildOf(transform) && !target.Contains(button))
+                target.Add(button);
         }
     }
 
-    private void AutoBindChildButtons()
+    private void AddButtonToPool(Button button)
     {
-        var childButtons = GetComponentsInChildren<Button>(true);
-        var mergedButtons = new List<Button>(_buttons ?? Array.Empty<Button>());
+        var index = _buttonPool.Count;
 
-        foreach (var button in childButtons)
+        _buttonPool.Add(button);
+        _labelPool.Add(button.GetComponentInChildren<TextMeshProUGUI>(true));
+
+        button.onClick.RemoveAllListeners();
+        button.onClick.AddListener(() => OnIndexClicked?.Invoke(index));
+    }
+
+    private void EnsureButtonCount(int count)
+    {
+        if (_templateButton == null || _buttonParent == null)
+            return;
+
+        while (_buttonPool.Count < count)
         {
-            if (!mergedButtons.Contains(button))
-                mergedButtons.Add(button);
+            var button = Instantiate(_templateButton, _buttonParent);
+            button.name = $"{_templateButton.name}_{_buttonPool.Count + 1}";
+            AddButtonToPool(button);
         }
 
-        _buttons = mergedButtons.ToArray();
+        RefreshSerializedCache();
+    }
 
-        var labels = new List<TextMeshProUGUI>();
-        foreach (var button in _buttons)
-        {
-            var label = button.GetComponentInChildren<TextMeshProUGUI>(true);
-            labels.Add(label);
-        }
-
-        _labels = labels.ToArray();
+    private void RefreshSerializedCache()
+    {
+        _buttons = _buttonPool.ToArray();
+        _labels = _labelPool.ToArray();
     }
 
     public void SetCount(int count)
     {
-        for (var i = 0; i < _buttons.Length; i++)
-        {
-            _buttons[i].gameObject.SetActive(i < count);
+        count = Mathf.Max(0, count);
+        EnsureButtonCount(count);
 
-            if (i < _labels.Length && _labels[i] != null)
-                _labels[i].text = (i + 1).ToString();
+        for (var i = 0; i < _buttonPool.Count; i++)
+        {
+            _buttonPool[i].gameObject.SetActive(i < count);
+
+            if (_labelPool[i] != null)
+                _labelPool[i].text = (i + 1).ToString();
         }
     }
 
     public void SetSelectedIndex(int selectedIndex)
     {
-        for (var i = 0; i < _buttons.Length; i++)
+        for (var i = 0; i < _buttonPool.Count; i++)
         {
-            if (_buttons[i].targetGraphic != null)
-                _buttons[i].targetGraphic.color = i == selectedIndex ? _selectedColor : _normalColor;
+            if (_buttonPool[i].targetGraphic != null)
+                _buttonPool[i].targetGraphic.color = i == selectedIndex ? _selectedColor : _normalColor;
         }
     }
 
     public void SetInteractable(int index, bool value)
     {
-        if (index < 0 || index >= _buttons.Length)
+        if (index < 0 || index >= _buttonPool.Count)
             return;
 
-        _buttons[index].gameObject.SetActive(value);
+        _buttonPool[index].interactable = value;
     }
 }

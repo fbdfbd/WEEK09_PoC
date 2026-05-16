@@ -16,9 +16,9 @@ MonoBehaviour:
   _day: 2
   _isFollowUp: 0
   _parentRequestId: 
-  _supplementFollowUpRequestId: 
+  _supplementFollowUpRequestId: req_d2_01_supplement
   _priority: 30
-  _title: 테스트2-1
-  _body: 테스트2-1 본문
-  _summary: 테스트2-1 요약
+  _title: 공공기관 열람·공개 신청서
+  _body: "담당관님께,\n저는 서부시장 식중독 점검 기록을 요청합니다.\n요청 기록 상세:\n901.05.02 서부시장 식중독 신고 관련 현장 점검표.\n검체 의뢰서, 영업장 조치 명령서.\n901.05.03 보건청 검토 메모, 회수 조치 기록 일체.\n가능한 경우 전자 사본으로 제공해주십시오.\n조건에 걸린다면, 업체명 일부를 가린 점검 결과라도 공개 요청합니다."
+  _summary: "청구인: 주민4\n연락처: xx.04.404\n제출일자: 901. 05. 04"
   _tags: []

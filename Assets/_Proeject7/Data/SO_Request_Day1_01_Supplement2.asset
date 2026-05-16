@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60e4b598349812044bbf819b53287cad, type: 3}
+  m_Name: SO_Request_Day1_01_Supplement2
+  m_EditorClassIdentifier: Assembly-CSharp::SO_Request
+  _id: req_d1_01_supplement2
+  _day: 3
+  _isFollowUp: 1
+  _parentRequestId: req_d1_01_supplement
+  _supplementFollowUpRequestId: 
+  _priority: 100
+  _title: 공공기관 열람·공개 신청서
+  _body: "담당관님께,\n저는 중앙동 가로등 정전 민원 처리 기록을 최종 보완하여 요청합니다.\n요청 기록 상세:\n901.04.12 중앙동 3번가 12호 앞 정전 신고 접수 번호.\n현장 출동 지시서, 수리 완료 확인서.\n901.04.13 동일 지점 재점검 결과, 안전 조치 기록 일체.\n가능한 경우 전자 사본으로 제공해주십시오.\n조건에 걸린다면, 접수 번호와 조치 완료 여부라도 공개 요청합니다."
+  _summary: "청구인: 주민1\n연락처: xx.01.101\n제출일자: 901. 04. 16"
+  _tags: []
