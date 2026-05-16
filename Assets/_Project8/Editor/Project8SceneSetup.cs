@@ -93,9 +93,9 @@ namespace Project8.Editor
             serialized.FindProperty("_volumeDecreasePerSecond").floatValue = 0.5f;
             serialized.FindProperty("_friedRiceThreshold").floatValue = 85f;
             serialized.FindProperty("_burnPenaltyThreshold").floatValue = 95f;
-            serialized.FindProperty("_maxActiveOrders").intValue = 3;
-            serialized.FindProperty("_orderSpawnIntervalMin").floatValue = 8f;
-            serialized.FindProperty("_orderSpawnIntervalMax").floatValue = 12f;
+            serialized.FindProperty("_maxActiveOrders").intValue = 6;
+            serialized.FindProperty("_orderSpawnIntervalMin").floatValue = 4f;
+            serialized.FindProperty("_orderSpawnIntervalMax").floatValue = 7f;
             serialized.FindProperty("_gameSeconds").floatValue = 120f;
             serialized.FindProperty("_servingVolumeCost").floatValue = 20f;
             serialized.FindProperty("_minimumServingVolume").floatValue = 20f;

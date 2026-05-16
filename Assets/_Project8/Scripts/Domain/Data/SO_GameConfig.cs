@@ -20,9 +20,9 @@ namespace Project8.Domain.Data
         [SerializeField] private float _burnPenaltyThreshold = 95f;
 
         [Header("Orders")]
-        [SerializeField] private int _maxActiveOrders = 3;
-        [SerializeField] private float _orderSpawnIntervalMin = 8f;
-        [SerializeField] private float _orderSpawnIntervalMax = 12f;
+        [SerializeField] private int _maxActiveOrders = 6;
+        [SerializeField] private float _orderSpawnIntervalMin = 4f;
+        [SerializeField] private float _orderSpawnIntervalMax = 7f;
 
         [Header("Game")]
         [SerializeField] private float _gameSeconds = 120f;

@@ -23,9 +23,9 @@ MonoBehaviour:
   _volumeDecreasePerSecond: 0.5
   _friedRiceThreshold: 85
   _burnPenaltyThreshold: 95
-  _maxActiveOrders: 3
-  _orderSpawnIntervalMin: 8
-  _orderSpawnIntervalMax: 12
+  _maxActiveOrders: 6
+  _orderSpawnIntervalMin: 4
+  _orderSpawnIntervalMax: 7
   _gameSeconds: 120
   _servingVolumeCost: 20
   _minimumServingVolume: 20
