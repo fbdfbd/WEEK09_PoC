@@ -2,6 +2,9 @@ using System.Collections.Generic;
 
 public sealed class AgencyData
 {
+    public const int MinRelation = 0;
+    public const int MaxRelation = 10;
+
     public string Id { get; }
     public string Name { get; }
 
@@ -21,18 +24,29 @@ public sealed class AgencyData
     {
         Id = id;
         Name = name;
-        Relation = initialRelation;
+        Relation = ClampRelation(initialRelation);
         _staticTags = new HashSet<string>(staticTags);
     }
 
     public void SetRelation(int value)
     {
-        Relation = value;
+        Relation = ClampRelation(value);
     }
 
     public void ChangeRelation(int amount)
     {
-        Relation += amount;
+        SetRelation(Relation + amount);
+    }
+
+    private static int ClampRelation(int value)
+    {
+        if (value < MinRelation)
+            return MinRelation;
+
+        if (value > MaxRelation)
+            return MaxRelation;
+
+        return value;
     }
 
     public void AddRuntimeTag(string tag)

@@ -15,3 +15,16 @@ public enum RequestStatus
     Deferred,           // 보류
     Rejected            // 기각
 }
+
+public enum RejectReason
+{
+    PersonalInformation,
+    NationalSecurity,
+}
+
+public enum RequestFactTag
+{
+    ContainsPersonalInfo,
+    SecuritySensitive,
+    PublicInterestHigh,
+}

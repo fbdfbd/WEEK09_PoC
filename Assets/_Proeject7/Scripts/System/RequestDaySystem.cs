@@ -6,17 +6,20 @@ public sealed class RequestDaySystem
     private readonly SO_PoCDatabase _database;
     private readonly RequestStore _requestStore;
     private readonly RequestHistory _history;
+    private readonly DeferredRequestStore _deferredRequestStore;
     private readonly GameFlowState _flowState;
 
     public RequestDaySystem(
         SO_PoCDatabase database,
         RequestStore requestStore,
         RequestHistory history,
+        DeferredRequestStore deferredRequestStore,
         GameFlowState flowState)
     {
         _database = database;
         _requestStore = requestStore;
         _history = history;
+        _deferredRequestStore = deferredRequestStore;
         _flowState = flowState;
     }
 
@@ -36,11 +39,13 @@ public sealed class RequestDaySystem
     private List<RequestData> BuildActiveRequests(int day)
     {
         var followUps = BuildFollowUpRequests();
+        var deferredRequests = BuildDeferredRequests(day);
         var baseRequests = _requestStore
             .GetBaseRequestsForDay(day)
             .Take(_database.RequestsPerDay);
 
         var activeRequests = followUps
+            .Concat(deferredRequests)
             .Concat(baseRequests)
             .ToList();
 
@@ -48,6 +53,29 @@ public sealed class RequestDaySystem
             _history.MarkFollowUpActivated(request.ParentRequestId);
 
         return activeRequests;
+    }
+
+    private List<RequestData> BuildDeferredRequests(int day)
+    {
+        var deferredRequests = new List<RequestData>();
+
+        foreach (var record in _deferredRequestStore.GetRecordsForDay(day))
+        {
+            var request = _requestStore.FindOrNull(record.RequestId);
+            if (request == null || _requestStore.IsResolved(request.Id))
+                continue;
+
+            request.DecreaseRemainingDays();
+            request.ResetForReview();
+            deferredRequests.Add(request);
+            _deferredRequestStore.MarkActivated(record);
+        }
+
+        return deferredRequests
+            .OrderBy(request => request.RemainingDays)
+            .ThenByDescending(request => request.Priority)
+            .ThenBy(request => request.Id)
+            .ToList();
     }
 
     private List<RequestData> BuildFollowUpRequests()

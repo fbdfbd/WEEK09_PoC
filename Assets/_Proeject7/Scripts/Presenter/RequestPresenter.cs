@@ -38,6 +38,7 @@ public sealed class RequestPresenter : IStartable, IDisposable
         _view.OnCorrectionRequiredClicked += HandleCorrectionRequiredClicked;
         _view.OnPendingClicked += HandlePendingClicked;
         _view.OnRejectedClicked += HandleRejectedClicked;
+        _view.OnRejectReasonClicked += HandleRejectReasonClicked;
 
         _flowView.OnNextClicked += HandleNextClicked;
 
@@ -92,12 +93,40 @@ public sealed class RequestPresenter : IStartable, IDisposable
 
     private void HandlePendingClicked()
     {
+        var requestId = _flowState.SelectedRequestId.Value;
+        if (string.IsNullOrEmpty(requestId) || !_requestStore.Get(requestId).CanDefer)
+            return;
+
         SelectStatus(RequestStatus.Deferred);
     }
 
     private void HandleRejectedClicked()
     {
-        SelectStatus(RequestStatus.Rejected);
+        if (_flowState.CurrentPhase.Value != GamePhase.RequestReview)
+            return;
+
+        _view.SetRejectReasonPanelShow(true);
+        _view.SetInteractionTagText(_textProvider.GetStatusText(RequestStatus.Rejected));
+        _view.SetInteractionTagShow(true);
+        _view.SetAgencyTagShow(false);
+
+        _flowView.SetNextText(_textProvider.ConfirmText);
+        _flowView.SetNextInteractable(false);
+    }
+
+    private void HandleRejectReasonClicked(RejectReason reason)
+    {
+        if (_flowState.CurrentPhase.Value != GamePhase.RequestReview)
+            return;
+
+        _draftStore.SetRejected(_flowState.SelectedRequestId.Value, reason);
+
+        _view.SetInteractionTagText($"{_textProvider.GetStatusText(RequestStatus.Rejected)} / {_textProvider.GetRejectReasonText(reason)}");
+        _view.SetInteractionTagShow(true);
+        _view.SetAgencyTagShow(false);
+
+        _flowView.SetNextText(_textProvider.ConfirmText);
+        _flowView.SetNextInteractable(true);
     }
 
     private void SelectStatus(RequestStatus status)
@@ -105,6 +134,7 @@ public sealed class RequestPresenter : IStartable, IDisposable
         if (_flowState.CurrentPhase.Value != GamePhase.RequestReview)
             return;
 
+        _view.SetRejectReasonPanelShow(false);
         _draftStore.Set(_flowState.SelectedRequestId.Value, status);
 
         _view.SetInteractionTagText(_textProvider.GetStatusText(status));
@@ -129,10 +159,10 @@ public sealed class RequestPresenter : IStartable, IDisposable
             if (request.Status != RequestStatus.Pending)
                 continue;
 
-            if (!_draftStore.TryGet(request.Id, out var status))
+            if (!_draftStore.TryGet(request.Id, out var draft))
                 continue;
 
-            _requestSystem.ApplyDecision(request.Id, status);
+            _requestSystem.ApplyDecision(request.Id, draft);
             _draftStore.Clear(request.Id);
         }
 
@@ -142,6 +172,8 @@ public sealed class RequestPresenter : IStartable, IDisposable
     private void RenderDecisionState(RequestData request)
     {
         _view.SetAgencyTagShow(false);
+        _view.SetRejectReasonPanelShow(false);
+        _view.SetDeadlineText(_textProvider.GetDeadlineText(request));
 
         if (request.Status != RequestStatus.Pending)
         {
@@ -153,11 +185,16 @@ public sealed class RequestPresenter : IStartable, IDisposable
             return;
         }
 
-        if (_draftStore.TryGet(request.Id, out var draftStatus))
+        if (_draftStore.TryGet(request.Id, out var draft))
         {
-            _view.SetInteractionTagText(_textProvider.GetStatusText(draftStatus));
+            var text = draft.Status == RequestStatus.Rejected && draft.HasRejectReason
+                ? $"{_textProvider.GetStatusText(draft.Status)} / {_textProvider.GetRejectReasonText(draft.RejectReason)}"
+                : _textProvider.GetStatusText(draft.Status);
+
+            _view.SetInteractionTagText(text);
             _view.SetInteractionTagShow(true);
             _view.SetButtonsInteractable(true);
+            _view.SetPendingButtonInteractable(request.CanDefer);
             _flowView.SetNextText(_textProvider.ConfirmText);
             _flowView.SetNextInteractable(true);
             return;
@@ -170,7 +207,12 @@ public sealed class RequestPresenter : IStartable, IDisposable
     {
         _view.SetInteractionTagShow(false);
         _view.SetAgencyTagShow(false);
+        _view.SetRejectReasonPanelShow(false);
         _view.SetButtonsInteractable(true);
+
+        var requestId = _flowState.SelectedRequestId.Value;
+        if (!string.IsNullOrEmpty(requestId))
+            _view.SetPendingButtonInteractable(_requestStore.Get(requestId).CanDefer);
 
         _flowView.SetNextText(_textProvider.ConfirmText);
         _flowView.SetNextInteractable(true);
@@ -201,6 +243,7 @@ public sealed class RequestPresenter : IStartable, IDisposable
         _view.OnCorrectionRequiredClicked -= HandleCorrectionRequiredClicked;
         _view.OnPendingClicked -= HandlePendingClicked;
         _view.OnRejectedClicked -= HandleRejectedClicked;
+        _view.OnRejectReasonClicked -= HandleRejectReasonClicked;
 
         _flowView.OnNextClicked -= HandleNextClicked;
 

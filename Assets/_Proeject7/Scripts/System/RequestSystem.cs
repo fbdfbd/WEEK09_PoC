@@ -3,26 +3,38 @@ using System.Collections.Generic;
 public sealed class RequestSystem
 {
     private readonly RequestStore _requestStore;
+    private readonly AgencyStore _agencyStore;
     private readonly RequestHistory _history;
+    private readonly DeferredRequestStore _deferredRequestStore;
+    private readonly RejectDecisionEvaluator _rejectDecisionEvaluator;
     private readonly GameFlowState _flowState;
 
     public RequestSystem(
         RequestStore requestStore,
+        AgencyStore agencyStore,
         RequestHistory history,
+        DeferredRequestStore deferredRequestStore,
+        RejectDecisionEvaluator rejectDecisionEvaluator,
         GameFlowState flowState)
     {
         _requestStore = requestStore;
+        _agencyStore = agencyStore;
         _history = history;
+        _deferredRequestStore = deferredRequestStore;
+        _rejectDecisionEvaluator = rejectDecisionEvaluator;
         _flowState = flowState;
     }
 
-    public void ApplyDecision(string requestId, RequestStatus status)
+    public void ApplyDecision(string requestId, RequestDecisionDraft draft)
     {
         var request = _requestStore.Get(requestId);
+        var status = draft.Status;
 
         request.SetStatus(status);
         _history.AddResult(requestId, status, _flowState.CurrentDay.Value);
-        _requestStore.MarkResolved(requestId);
+
+        if (status != RequestStatus.Deferred)
+            _requestStore.MarkResolved(requestId);
 
         switch (status)
         {
@@ -37,12 +49,30 @@ public sealed class RequestSystem
 
             case RequestStatus.Deferred:
                 request.AddRuntimeTag("보류");
+                _deferredRequestStore.Add(requestId, _flowState.CurrentDay.Value);
                 break;
 
             case RequestStatus.Rejected:
                 request.AddRuntimeTag("기각");
+                ApplyRejectResult(request, draft);
                 break;
         }
+    }
+
+    private void ApplyRejectResult(RequestData request, RequestDecisionDraft draft)
+    {
+        if (!draft.HasRejectReason)
+            return;
+
+        var result = _rejectDecisionEvaluator.Evaluate(request, draft.RejectReason);
+        request.AddRuntimeTag(result.IsValid ? "정당기각" : "부당기각");
+        request.AddRuntimeTag($"기각사유:{draft.RejectReason}");
+
+        if (result.AgencyRelationDelta == 0 || string.IsNullOrEmpty(request.RelatedAgencyId))
+            return;
+
+        var agency = _agencyStore.Get(request.RelatedAgencyId);
+        agency.ChangeRelation(result.AgencyRelationDelta);
     }
 
     public void CompleteRequestReview()

@@ -10,12 +10,15 @@ public class SO_Request : ScriptableObject
     [SerializeField] private string _parentRequestId;
     [SerializeField] private string _supplementFollowUpRequestId;
     [SerializeField] private int _priority;
+    [SerializeField] private string _relatedAgencyId;
+    [SerializeField] private int _deadlineDays = 2;
 
     [SerializeField] private string _title;
     [SerializeField][TextArea] private string _body;
     [SerializeField][TextArea] private string _summary;
 
     [SerializeField] List<string> _tags = new();
+    [SerializeField] private List<RequestFactTag> _factTags = new();
 
     public string Id => _id;
     public int Day => _day;
@@ -23,8 +26,11 @@ public class SO_Request : ScriptableObject
     public string ParentRequestId => _parentRequestId;
     public string SupplementFollowUpRequestId => _supplementFollowUpRequestId;
     public int Priority => _priority;
+    public string RelatedAgencyId => _relatedAgencyId;
+    public int DeadlineDays => _deadlineDays;
     public string Title => _title;
     public string Body => _body;
     public string Summary => _summary;
     public List<string> Tags => _tags;
+    public IReadOnlyList<RequestFactTag> FactTags => _factTags;
 }

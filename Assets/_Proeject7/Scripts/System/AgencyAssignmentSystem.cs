@@ -1,5 +1,7 @@
 public sealed class AgencyAssignmentSystem
 {
+    private const int AssignmentRelationCost = -1;
+
     private readonly RequestStore _requestStore;
     private readonly AgencyStore _agencyStore;
     private readonly GameFlowState _flowState;
@@ -21,6 +23,7 @@ public sealed class AgencyAssignmentSystem
 
         request.AddRuntimeTag("기관배정완료");
         request.AddRuntimeTag($"기관:{agency.Id}");
+        agency.ChangeRelation(AssignmentRelationCost);
         _requestStore.MarkAssignmentCompleted(requestId);
     }
 

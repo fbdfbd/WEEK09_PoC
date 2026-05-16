@@ -8,6 +8,8 @@ public sealed class AgencyStore
 {
     private readonly Dictionary<string, AgencyData> agencies = new();
 
+    public IReadOnlyCollection<AgencyData> All => agencies.Values;
+
     public void Initialize(IEnumerable<AgencyData> source)
     {
         agencies.Clear();

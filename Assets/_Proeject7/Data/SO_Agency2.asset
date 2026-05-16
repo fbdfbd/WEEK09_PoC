@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SO_Agency
   _id: test2
   _name: "\uAD70 \uBCF4\uC548\uAD6D"
-  defaultRelation: 0
+  defaultRelation: 5
   _tags: []

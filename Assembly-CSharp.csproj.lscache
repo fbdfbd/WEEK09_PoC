@@ -60,6 +60,7 @@ Assets/_Proeject7/Scripts/
  Enum.cs
  Presenter/
   AgencyAssignmentPresenter.cs
+  AgencyRelationPresenter.cs
   DayFlowPresenter.cs
   HudPresenter.cs
   RequestListPresenter.cs
@@ -71,8 +72,10 @@ Assets/_Proeject7/Scripts/
   AgencyAssignmentDraftStore.cs
   AgencyData.cs
   AgencyStore.cs
+  DeferredRequestStore.cs
   GameFlowState.cs
   RequestData.cs
+  RequestDecisionDraft.cs
   RequestDecisionDraftStore.cs
   RequestHistory.cs
   RequestStore.cs
@@ -80,9 +83,11 @@ Assets/_Proeject7/Scripts/
   RuntimeDataBuilder.cs
  System/
   AgencyAssignmentSystem.cs
+  RejectDecisionEvaluator.cs
   RequestDaySystem.cs
   RequestSystem.cs
  View/
+  AgencyRelationView.cs
   FlowControlView.cs
   HudView.cs
   IndexSelectorView.cs

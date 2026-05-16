@@ -26,10 +26,13 @@ public sealed class RuntimeDataBuilder
             so.ParentRequestId,
             so.SupplementFollowUpRequestId,
             so.Priority,
+            so.RelatedAgencyId,
+            so.DeadlineDays,
             so.Title,
             so.Body,
             so.Summary,
-            so.Tags
+            so.Tags,
+            so.FactTags
         );
     }
 

@@ -6,7 +6,7 @@ public class SO_Agency : ScriptableObject
 {
     [SerializeField] private string _id;
     [SerializeField] private string _name;
-    [SerializeField] private int defaultRelation;
+    [SerializeField] private int defaultRelation = 5;
     [SerializeField] private List<string> _tags = new();
 
     public string Id => _id;

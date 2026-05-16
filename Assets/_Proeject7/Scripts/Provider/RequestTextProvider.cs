@@ -21,4 +21,19 @@ public sealed class RequestTextProvider
     {
         return agency.Name;
     }
+
+    public string GetDeadlineText(RequestData request)
+    {
+        return $"처리기한 D-{request.RemainingDays}";
+    }
+
+    public string GetRejectReasonText(RejectReason reason)
+    {
+        return reason switch
+        {
+            RejectReason.PersonalInformation => "개인정보",
+            RejectReason.NationalSecurity => "국가안보",
+            _ => "사유 불명"
+        };
+    }
 }
