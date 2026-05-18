@@ -7,13 +7,15 @@ namespace Project9.Presentation
             string displayName,
             string description,
             int reputation,
-            bool isSelected)
+            bool isSelected,
+            bool isSubmitted)
         {
             Id = id;
             DisplayName = displayName;
             Description = description;
             Reputation = reputation;
             IsSelected = isSelected;
+            IsSubmitted = isSubmitted;
         }
 
         public string Id { get; }
@@ -21,5 +23,6 @@ namespace Project9.Presentation
         public string Description { get; }
         public int Reputation { get; }
         public bool IsSelected { get; }
+        public bool IsSubmitted { get; }
     }
 }

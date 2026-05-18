@@ -9,13 +9,15 @@ namespace Project9.Presentation
             string summary,
             IReadOnlyList<ParagraphViewModel> paragraphs,
             IReadOnlyList<TargetViewModel> targets,
-            string selectedTargetId)
+            string selectedTargetId,
+            bool isSelectedTargetSubmitted)
         {
             Title = title;
             Summary = summary;
             Paragraphs = paragraphs;
             Targets = targets;
             SelectedTargetId = selectedTargetId;
+            IsSelectedTargetSubmitted = isSelectedTargetSubmitted;
         }
 
         public string Title { get; }
@@ -23,5 +25,6 @@ namespace Project9.Presentation
         public IReadOnlyList<ParagraphViewModel> Paragraphs { get; }
         public IReadOnlyList<TargetViewModel> Targets { get; }
         public string SelectedTargetId { get; }
+        public bool IsSelectedTargetSubmitted { get; }
     }
 }

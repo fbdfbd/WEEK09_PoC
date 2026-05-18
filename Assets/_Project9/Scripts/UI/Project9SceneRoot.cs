@@ -56,6 +56,7 @@ namespace Project9.UI
         private readonly Dictionary<string, Image> _targetBackgrounds = new();
         private readonly Dictionary<string, Tween> _targetColorTweens = new();
         private readonly List<Button> _editButtons = new();
+        private readonly List<Button> _targetButtons = new();
 
         private Project9Presenter _presenter;
         private Canvas _canvas;
@@ -66,8 +67,14 @@ namespace Project9.UI
         private TextMeshProUGUI _titleText;
         private TextMeshProUGUI _summaryText;
         private TextMeshProUGUI _resultText;
+        private Button _submitButton;
         private Tween _tooltipTween;
         private Tween _resultTween;
+
+        public event Action<FinalResultViewModel> FinalResultReady;
+
+        public Project9Presenter Presenter => _presenter;
+        public FinalResultViewModel CurrentFinalResult => _presenter?.CurrentFinalResult;
 
 #if UNITY_EDITOR
         private void OnEnable()
@@ -128,6 +135,7 @@ namespace Project9.UI
             _targetBackgrounds.Clear();
             KillTargetColorTweens();
             _editButtons.Clear();
+            _targetButtons.Clear();
 
             _presenter?.Dispose();
             _presenter = new Project9Presenter(
@@ -334,6 +342,7 @@ namespace Project9.UI
             submit.name = "SubmitButton";
             AddLayoutElement((RectTransform)submit.transform, -1, submitButtonHeight);
             submit.onClick.AddListener(SubmitSelectedTarget);
+            _submitButton = submit;
         }
 
         private void BuildTargetCard(Transform parent, SubmitTargetDefinition target)
@@ -349,6 +358,7 @@ namespace Project9.UI
             var button = card.gameObject.AddComponent<Button>();
             button.targetGraphic = card.GetComponent<Image>();
             button.onClick.AddListener(() => SelectSubmitTarget(target.Id));
+            _targetButtons.Add(button);
 
             var layout = card.gameObject.AddComponent<VerticalLayoutGroup>();
             layout.padding = new RectOffset(12, 12, 10, 10);
@@ -448,10 +458,17 @@ namespace Project9.UI
                     AnimateTargetBackground(target.Id, background, targetColor);
                 }
             }
+
+            ApplyInteractionState(viewModel);
         }
 
         private void ApplySubmissionResult(SubmissionResultViewModel viewModel)
         {
+            if (viewModel == null)
+            {
+                return;
+            }
+
             var sign = viewModel.ReputationDelta >= 0 ? "+" : string.Empty;
             _resultText.text = $"{viewModel.TargetName} 제출 결과: 점수 {viewModel.TotalScore}, 평판 {sign}{viewModel.ReputationDelta}";
             _resultTween?.Kill();
@@ -479,8 +496,69 @@ namespace Project9.UI
         private void SubmitSelectedTarget()
         {
             var result = _presenter.SubmitSelectedTarget();
-            ApplySubmissionResult(result);
             ApplyReport(_presenter.CurrentReport);
+            ApplySubmissionResult(result);
+
+            if (_presenter.CurrentFinalResult != null)
+            {
+                FinalResultReady?.Invoke(_presenter.CurrentFinalResult);
+            }
+        }
+
+        public void RestartScenario()
+        {
+            if (_presenter == null)
+            {
+                return;
+            }
+
+            _presenter.Restart();
+            ApplyReport(_presenter.CurrentReport);
+
+            if (_resultText != null)
+            {
+                _resultText.text = "아직 제출하지 않았습니다.";
+            }
+        }
+
+        public void QuitApplication()
+        {
+#if UNITY_EDITOR
+            if (Application.isPlaying)
+            {
+                EditorApplication.isPlaying = false;
+            }
+#else
+            Application.Quit();
+#endif
+        }
+
+        private void ApplyInteractionState(ReportViewModel viewModel)
+        {
+            var hasViewModel = viewModel != null;
+            var canSubmit = hasViewModel && !viewModel.IsSelectedTargetSubmitted;
+
+            foreach (var button in _editButtons)
+            {
+                if (button != null)
+                {
+                    button.interactable = hasViewModel;
+                }
+            }
+
+            foreach (var button in _targetButtons)
+            {
+                if (button != null)
+                {
+                    button.interactable = hasViewModel;
+                }
+            }
+
+            if (_submitButton != null)
+            {
+                _submitButton.interactable = canSubmit
+                    && !string.IsNullOrWhiteSpace(viewModel.SelectedTargetId);
+            }
         }
 
         private string BuildParagraphTooltip(ParagraphDefinition paragraph)
@@ -822,6 +900,7 @@ namespace Project9.UI
             _targetReputations.Clear();
             _targetBackgrounds.Clear();
             _editButtons.Clear();
+            _targetButtons.Clear();
             KillTargetColorTweens();
 
             _titleText = FindText(root, "Title");
@@ -906,6 +985,7 @@ namespace Project9.UI
                     {
                         button.onClick.RemoveAllListeners();
                         button.onClick.AddListener(() => SelectSubmitTarget(target.Id));
+                        _targetButtons.Add(button);
                     }
 
                     AttachHover(card.gameObject, () => target.DisplayName, () => BuildTargetTooltip(target));
@@ -924,6 +1004,8 @@ namespace Project9.UI
                 submit.onClick.RemoveAllListeners();
                 submit.onClick.AddListener(SubmitSelectedTarget);
             }
+
+            _submitButton = submit;
 
             ApplyFont(root);
             _presenter.Initialize(scenario);

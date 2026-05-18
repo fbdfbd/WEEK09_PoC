@@ -13,232 +13,283 @@ MonoBehaviour:
   m_Name: Report_POC9_DeepInspection
   m_EditorClassIdentifier: 
   id: report_poc9_deep_inspection
-  title: "심층 감찰 보고서: 세인항 재개발 자금 흐름"
-  summary: "세인항 재개발 사업의 자금 흐름, 내부 승인 절차, 익명 제보자 증언을 묶은 단일 보고서."
+  title: "\uC2EC\uCE35 \uAC10\uCC30 \uBCF4\uACE0\uC11C"
+  summary: "\uC138\uC778\uD56D \uC7AC\uAC1C\uBC1C \uC0AC\uC5C5\uC758 \uC790\uAE08
+    \uD750\uB984, \uB0B4\uBD80 \uC2B9\uC778 \uC808\uCC28, \uC775\uBA85 \uC81C\uBCF4\uC790
+    \uC99D\uC5B8\uC744 \uBB36\uC740 \uB2E8\uC77C \uBCF4\uACE0\uC11C."
   paragraphs:
   - id: p01_contract
-    title: "계약 구조"
-    originalText: "세인항 재개발 2차 계약은 공개 입찰 형식을 취했지만, 최종 심사표는 세 곳의 평가위원 서명이 빠진 상태로 보관되어 있었다."
+    title: "\uACC4\uC57D \uAD6C\uC870"
+    originalText: "\uC138\uC778\uD56D \uC7AC\uAC1C\uBC1C 2\uCC28 \uACC4\uC57D\uC740
+      \uACF5\uAC1C \uC785\uCC30 \uD615\uC2DD\uC744 \uCDE8\uD588\uC9C0\uB9CC, \uCD5C\uC885
+      \uC2EC\uC0AC\uD45C\uB294 \uC138 \uACF3\uC758 \uD3C9\uAC00\uC704\uC6D0 \uC11C\uBA85\uC774
+      \uBE60\uC9C4 \uC0C1\uD0DC\uB85C \uBCF4\uAD00\uB418\uC5B4 \uC788\uC5C8\uB2E4."
     informationValue: 5
     sensitivity: 3
-    tags:
-    - 0
-    - 2
-    - 6
+    tags: 000000000200000006000000
     editOptions:
     - id: p01_partial_mask
-      label: "평가위원 정보를 가린다"
+      label: "\uD3C9\uAC00\uC704\uC6D0 \uC815\uBCF4\uB97C \uAC00\uB9B0\uB2E4"
       actionType: 1
-      resultingText: "세인항 재개발 2차 계약은 공개 입찰 형식을 취했지만, 최종 심사표는 일부 평가위원 정보가 가려진 상태로 보관되어 있었다."
+      resultingText: "\uC138\uC778\uD56D \uC7AC\uAC1C\uBC1C 2\uCC28 \uACC4\uC57D\uC740
+        \uACF5\uAC1C \uC785\uCC30 \uD615\uC2DD\uC744 \uCDE8\uD588\uC9C0\uB9CC, \uCD5C\uC885
+        \uC2EC\uC0AC\uD45C\uB294 \uC77C\uBD80 \uD3C9\uAC00\uC704\uC6D0 \uC815\uBCF4\uAC00
+        \uAC00\uB824\uC9C4 \uC0C1\uD0DC\uB85C \uBCF4\uAD00\uB418\uC5B4 \uC788\uC5C8\uB2E4."
       integrityDelta: -15
       exposureDelta: -1
       distortionPenalty: 0
     - id: p01_full_mask
-      label: "계약 단락 전체를 가린다"
+      label: "\uACC4\uC57D \uB2E8\uB77D \uC804\uCCB4\uB97C \uAC00\uB9B0\uB2E4"
       actionType: 2
-      resultingText: "[계약 구조 관련 단락 전체 비공개]"
+      resultingText: "[\uACC4\uC57D \uAD6C\uC870 \uAD00\uB828 \uB2E8\uB77D \uC804\uCCB4
+        \uBE44\uACF5\uAC1C]"
       integrityDelta: -80
       exposureDelta: -3
       distortionPenalty: 0
     - id: p01_rewrite_preserve
-      label: "절차상 의문으로 완화한다"
+      label: "\uC808\uCC28\uC0C1 \uC758\uBB38\uC73C\uB85C \uC644\uD654\uD55C\uB2E4"
       actionType: 3
-      resultingText: "세인항 재개발 2차 계약의 최종 심사표에는 일부 절차상 확인이 필요한 공백이 남아 있었다."
+      resultingText: "\uC138\uC778\uD56D \uC7AC\uAC1C\uBC1C 2\uCC28 \uACC4\uC57D\uC758
+        \uCD5C\uC885 \uC2EC\uC0AC\uD45C\uC5D0\uB294 \uC77C\uBD80 \uC808\uCC28\uC0C1
+        \uD655\uC778\uC774 \uD544\uC694\uD55C \uACF5\uBC31\uC774 \uB0A8\uC544 \uC788\uC5C8\uB2E4."
       integrityDelta: -20
       exposureDelta: -1
       distortionPenalty: 5
     - id: p01_rewrite_distort
-      label: "정상 심사로 고쳐 쓴다"
+      label: "\uC815\uC0C1 \uC2EC\uC0AC\uB85C \uACE0\uCCD0 \uC4F4\uB2E4"
       actionType: 4
-      resultingText: "세인항 재개발 2차 계약은 공개 입찰과 정식 심사를 거쳐 문제 없이 보관되었다."
+      resultingText: "\uC138\uC778\uD56D \uC7AC\uAC1C\uBC1C 2\uCC28 \uACC4\uC57D\uC740
+        \uACF5\uAC1C \uC785\uCC30\uACFC \uC815\uC2DD \uC2EC\uC0AC\uB97C \uAC70\uCCD0
+        \uBB38\uC81C \uC5C6\uC774 \uBCF4\uAD00\uB418\uC5C8\uB2E4."
       integrityDelta: -70
       exposureDelta: -2
       distortionPenalty: 35
   - id: p02_transfer
-    title: "자금 이체"
-    originalText: "계약 체결 이틀 전, 시행사 보조 계좌에서 시장 비서실 관계자의 가족 회사로 4억 2천만 원이 이체되었다."
+    title: "\uC790\uAE08 \uC774\uCCB4"
+    originalText: "\uACC4\uC57D \uCCB4\uACB0 \uC774\uD2C0 \uC804, \uC2DC\uD589\uC0AC
+      \uBCF4\uC870 \uACC4\uC88C\uC5D0\uC11C \uC2DC\uC7A5 \uBE44\uC11C\uC2E4 \uAD00\uACC4\uC790\uC758
+      \uAC00\uC871 \uD68C\uC0AC\uB85C 4\uC5B5 2\uCC9C\uB9CC \uC6D0\uC774 \uC774\uCCB4\uB418\uC5C8\uB2E4."
     informationValue: 5
     sensitivity: 5
-    tags:
-    - 0
-    - 1
-    - 2
+    tags: 000000000100000002000000
     editOptions:
     - id: p02_partial_mask
-      label: "금액과 가족 회사를 가린다"
+      label: "\uAE08\uC561\uACFC \uAC00\uC871 \uD68C\uC0AC\uB97C \uAC00\uB9B0\uB2E4"
       actionType: 1
-      resultingText: "계약 체결 이틀 전, 시행사 보조 계좌에서 시장 비서실 관계자와 연결된 회사로 금액 미상의 자금이 이체되었다."
+      resultingText: "\uACC4\uC57D \uCCB4\uACB0 \uC774\uD2C0 \uC804, \uC2DC\uD589\uC0AC
+        \uBCF4\uC870 \uACC4\uC88C\uC5D0\uC11C \uC2DC\uC7A5 \uBE44\uC11C\uC2E4 \uAD00\uACC4\uC790\uC640
+        \uC5F0\uACB0\uB41C \uD68C\uC0AC\uB85C \uAE08\uC561 \uBBF8\uC0C1\uC758 \uC790\uAE08\uC774
+        \uC774\uCCB4\uB418\uC5C8\uB2E4."
       integrityDelta: -20
       exposureDelta: -2
       distortionPenalty: 0
     - id: p02_full_mask
-      label: "자금 이체 단락 전체를 가린다"
+      label: "\uC790\uAE08 \uC774\uCCB4 \uB2E8\uB77D \uC804\uCCB4\uB97C \uAC00\uB9B0\uB2E4"
       actionType: 2
-      resultingText: "[자금 이체 관련 단락 전체 비공개]"
+      resultingText: "[\uC790\uAE08 \uC774\uCCB4 \uAD00\uB828 \uB2E8\uB77D \uC804\uCCB4
+        \uBE44\uACF5\uAC1C]"
       integrityDelta: -90
       exposureDelta: -5
       distortionPenalty: 0
     - id: p02_rewrite_preserve
-      label: "관계성을 약하게 표현한다"
+      label: "\uAD00\uACC4\uC131\uC744 \uC57D\uD558\uAC8C \uD45C\uD604\uD55C\uB2E4"
       actionType: 3
-      resultingText: "계약 직전 시행사 보조 계좌에서 공직자 주변 인물과 관련된 법인으로 상당한 자금이 이동한 정황이 확인되었다."
+      resultingText: "\uACC4\uC57D \uC9C1\uC804 \uC2DC\uD589\uC0AC \uBCF4\uC870 \uACC4\uC88C\uC5D0\uC11C
+        \uACF5\uC9C1\uC790 \uC8FC\uBCC0 \uC778\uBB3C\uACFC \uAD00\uB828\uB41C \uBC95\uC778\uC73C\uB85C
+        \uC0C1\uB2F9\uD55C \uC790\uAE08\uC774 \uC774\uB3D9\uD55C \uC815\uD669\uC774
+        \uD655\uC778\uB418\uC5C8\uB2E4."
       integrityDelta: -15
       exposureDelta: -1
       distortionPenalty: 5
     - id: p02_rewrite_distort
-      label: "정상 거래처럼 바꾼다"
+      label: "\uC815\uC0C1 \uAC70\uB798\uCC98\uB7FC \uBC14\uAFBC\uB2E4"
       actionType: 4
-      resultingText: "계약 직전 시행사 보조 계좌에서는 통상적인 정산 목적의 법인 간 거래만 확인되었다."
+      resultingText: "\uACC4\uC57D \uC9C1\uC804 \uC2DC\uD589\uC0AC \uBCF4\uC870 \uACC4\uC88C\uC5D0\uC11C\uB294
+        \uD1B5\uC0C1\uC801\uC778 \uC815\uC0B0 \uBAA9\uC801\uC758 \uBC95\uC778 \uAC04
+        \uAC70\uB798\uB9CC \uD655\uC778\uB418\uC5C8\uB2E4."
       integrityDelta: -85
       exposureDelta: -4
       distortionPenalty: 45
   - id: p03_whistleblower
-    title: "제보자 진술"
-    originalText: "익명 제보자는 심사 전날 비공식 회의에서 낙찰 업체가 이미 결정되었다는 말을 들었다고 진술했다."
+    title: "\uC81C\uBCF4\uC790 \uC9C4\uC220"
+    originalText: "\uC775\uBA85 \uC81C\uBCF4\uC790\uB294 \uC2EC\uC0AC \uC804\uB0A0
+      \uBE44\uACF5\uC2DD \uD68C\uC758\uC5D0\uC11C \uB099\uCC30 \uC5C5\uCCB4\uAC00
+      \uC774\uBBF8 \uACB0\uC815\uB418\uC5C8\uB2E4\uB294 \uB9D0\uC744 \uB4E4\uC5C8\uB2E4\uACE0
+      \uC9C4\uC220\uD588\uB2E4."
     informationValue: 4
     sensitivity: 4
-    tags:
-    - 1
-    - 4
-    - 5
+    tags: 010000000400000005000000
     editOptions:
     - id: p03_partial_mask
-      label: "제보자 식별 가능성을 줄인다"
+      label: "\uC81C\uBCF4\uC790 \uC2DD\uBCC4 \uAC00\uB2A5\uC131\uC744 \uC904\uC778\uB2E4"
       actionType: 1
-      resultingText: "한 제보자는 심사 전날 비공식 회의에서 낙찰 업체가 이미 결정되었다는 말을 들었다고 진술했다."
+      resultingText: "\uD55C \uC81C\uBCF4\uC790\uB294 \uC2EC\uC0AC \uC804\uB0A0 \uBE44\uACF5\uC2DD
+        \uD68C\uC758\uC5D0\uC11C \uB099\uCC30 \uC5C5\uCCB4\uAC00 \uC774\uBBF8 \uACB0\uC815\uB418\uC5C8\uB2E4\uB294
+        \uB9D0\uC744 \uB4E4\uC5C8\uB2E4\uACE0 \uC9C4\uC220\uD588\uB2E4."
       integrityDelta: -10
       exposureDelta: -2
       distortionPenalty: 0
     - id: p03_full_mask
-      label: "제보자 진술 전체를 가린다"
+      label: "\uC81C\uBCF4\uC790 \uC9C4\uC220 \uC804\uCCB4\uB97C \uAC00\uB9B0\uB2E4"
       actionType: 2
-      resultingText: "[제보자 진술 단락 전체 비공개]"
+      resultingText: "[\uC81C\uBCF4\uC790 \uC9C4\uC220 \uB2E8\uB77D \uC804\uCCB4
+        \uBE44\uACF5\uAC1C]"
       integrityDelta: -80
       exposureDelta: -4
       distortionPenalty: 0
     - id: p03_rewrite_preserve
-      label: "확인 필요 진술로 낮춘다"
+      label: "\uD655\uC778 \uD544\uC694 \uC9C4\uC220\uB85C \uB0AE\uCD98\uB2E4"
       actionType: 3
-      resultingText: "일부 관계자는 심사 전후로 낙찰 업체가 사전에 거론되었다는 말을 들었다고 진술했으며, 추가 확인이 필요하다."
+      resultingText: "\uC77C\uBD80 \uAD00\uACC4\uC790\uB294 \uC2EC\uC0AC \uC804\uD6C4\uB85C
+        \uB099\uCC30 \uC5C5\uCCB4\uAC00 \uC0AC\uC804\uC5D0 \uAC70\uB860\uB418\uC5C8\uB2E4\uB294
+        \uB9D0\uC744 \uB4E4\uC5C8\uB2E4\uACE0 \uC9C4\uC220\uD588\uC73C\uBA70, \uCD94\uAC00
+        \uD655\uC778\uC774 \uD544\uC694\uD558\uB2E4."
       integrityDelta: -25
       exposureDelta: -1
       distortionPenalty: 10
     - id: p03_rewrite_distort
-      label: "소문으로 치부한다"
+      label: "\uC18C\uBB38\uC73C\uB85C \uCE58\uBD80\uD55C\uB2E4"
       actionType: 4
-      resultingText: "낙찰 업체가 사전에 결정되었다는 이야기는 확인되지 않은 현장 소문 수준에 머물렀다."
+      resultingText: "\uB099\uCC30 \uC5C5\uCCB4\uAC00 \uC0AC\uC804\uC5D0 \uACB0\uC815\uB418\uC5C8\uB2E4\uB294
+        \uC774\uC57C\uAE30\uB294 \uD655\uC778\uB418\uC9C0 \uC54A\uC740 \uD604\uC7A5
+        \uC18C\uBB38 \uC218\uC900\uC5D0 \uBA38\uBB3C\uB800\uB2E4."
       integrityDelta: -65
       exposureDelta: -2
       distortionPenalty: 30
   - id: p04_public_benefit
-    title: "공익 효과"
-    originalText: "재개발 이후 항만 노동자 안전 설비 예산은 전년 대비 38% 증가했고, 사고 보고 건수는 6개월 동안 감소했다."
+    title: "\uACF5\uC775 \uD6A8\uACFC"
+    originalText: "\uC7AC\uAC1C\uBC1C \uC774\uD6C4 \uD56D\uB9CC \uB178\uB3D9\uC790
+      \uC548\uC804 \uC124\uBE44 \uC608\uC0B0\uC740 \uC804\uB144 \uB300\uBE44 38%
+      \uC99D\uAC00\uD588\uACE0, \uC0AC\uACE0 \uBCF4\uACE0 \uAC74\uC218\uB294 6\uAC1C\uC6D4
+      \uB3D9\uC548 \uAC10\uC18C\uD588\uB2E4."
     informationValue: 3
     sensitivity: 1
-    tags:
-    - 3
-    - 6
+    tags: 0300000006000000
     editOptions:
     - id: p04_partial_mask
-      label: "수치를 일부 가린다"
+      label: "\uC218\uCE58\uB97C \uC77C\uBD80 \uAC00\uB9B0\uB2E4"
       actionType: 1
-      resultingText: "재개발 이후 항만 노동자 안전 설비 예산은 증가했고, 사고 보고 건수는 6개월 동안 감소했다."
+      resultingText: "\uC7AC\uAC1C\uBC1C \uC774\uD6C4 \uD56D\uB9CC \uB178\uB3D9\uC790
+        \uC548\uC804 \uC124\uBE44 \uC608\uC0B0\uC740 \uC99D\uAC00\uD588\uACE0, \uC0AC\uACE0
+        \uBCF4\uACE0 \uAC74\uC218\uB294 6\uAC1C\uC6D4 \uB3D9\uC548 \uAC10\uC18C\uD588\uB2E4."
       integrityDelta: -10
       exposureDelta: -1
       distortionPenalty: 0
     - id: p04_full_mask
-      label: "공익 효과 단락 전체를 가린다"
+      label: "\uACF5\uC775 \uD6A8\uACFC \uB2E8\uB77D \uC804\uCCB4\uB97C \uAC00\uB9B0\uB2E4"
       actionType: 2
-      resultingText: "[공익 효과 관련 단락 전체 비공개]"
+      resultingText: "[\uACF5\uC775 \uD6A8\uACFC \uAD00\uB828 \uB2E8\uB77D \uC804\uCCB4
+        \uBE44\uACF5\uAC1C]"
       integrityDelta: -70
       exposureDelta: -1
       distortionPenalty: 0
     - id: p04_rewrite_preserve
-      label: "중립적으로 압축한다"
+      label: "\uC911\uB9BD\uC801\uC73C\uB85C \uC555\uCD95\uD55C\uB2E4"
       actionType: 3
-      resultingText: "재개발 이후 안전 설비 예산과 사고 보고 지표에는 일부 개선 흐름이 나타났다."
+      resultingText: "\uC7AC\uAC1C\uBC1C \uC774\uD6C4 \uC548\uC804 \uC124\uBE44 \uC608\uC0B0\uACFC
+        \uC0AC\uACE0 \uBCF4\uACE0 \uC9C0\uD45C\uC5D0\uB294 \uC77C\uBD80 \uAC1C\uC120
+        \uD750\uB984\uC774 \uB098\uD0C0\uB0AC\uB2E4."
       integrityDelta: -15
       exposureDelta: 0
       distortionPenalty: 0
     - id: p04_rewrite_distort
-      label: "효과가 없었다고 고쳐 쓴다"
+      label: "\uD6A8\uACFC\uAC00 \uC5C6\uC5C8\uB2E4\uACE0 \uACE0\uCCD0 \uC4F4\uB2E4"
       actionType: 4
-      resultingText: "재개발 이후 안전 설비 예산과 사고 보고 지표에는 유의미한 개선이 확인되지 않았다."
+      resultingText: "\uC7AC\uAC1C\uBC1C \uC774\uD6C4 \uC548\uC804 \uC124\uBE44 \uC608\uC0B0\uACFC
+        \uC0AC\uACE0 \uBCF4\uACE0 \uC9C0\uD45C\uC5D0\uB294 \uC720\uC758\uBBF8\uD55C
+        \uAC1C\uC120\uC774 \uD655\uC778\uB418\uC9C0 \uC54A\uC558\uB2E4."
       integrityDelta: -75
       exposureDelta: 0
       distortionPenalty: 40
   - id: p05_internal_note
-    title: "내부 메모"
-    originalText: "감사팀 내부 메모에는 '정무적 부담이 큰 사안이므로 1차 발표에서는 계좌 자료를 제외한다'는 지시가 남아 있었다."
+    title: "\uB0B4\uBD80 \uBA54\uBAA8"
+    originalText: "\uAC10\uC0AC\uD300 \uB0B4\uBD80 \uBA54\uBAA8\uC5D0\uB294 '\uC815\uBB34\uC801
+      \uBD80\uB2F4\uC774 \uD070 \uC0AC\uC548\uC774\uBBC0\uB85C 1\uCC28 \uBC1C\uD45C\uC5D0\uC11C\uB294
+      \uACC4\uC88C \uC790\uB8CC\uB97C \uC81C\uC678\uD55C\uB2E4'\uB294 \uC9C0\uC2DC\uAC00
+      \uB0A8\uC544 \uC788\uC5C8\uB2E4."
     informationValue: 4
     sensitivity: 5
-    tags:
-    - 0
-    - 1
-    - 2
+    tags: 000000000100000002000000
     editOptions:
     - id: p05_partial_mask
-      label: "직접 인용을 가린다"
+      label: "\uC9C1\uC811 \uC778\uC6A9\uC744 \uAC00\uB9B0\uB2E4"
       actionType: 1
-      resultingText: "감사팀 내부 메모에는 정무적 부담을 이유로 1차 발표에서 일부 계좌 자료를 제외하자는 취지의 지시가 남아 있었다."
+      resultingText: "\uAC10\uC0AC\uD300 \uB0B4\uBD80 \uBA54\uBAA8\uC5D0\uB294 \uC815\uBB34\uC801
+        \uBD80\uB2F4\uC744 \uC774\uC720\uB85C 1\uCC28 \uBC1C\uD45C\uC5D0\uC11C \uC77C\uBD80
+        \uACC4\uC88C \uC790\uB8CC\uB97C \uC81C\uC678\uD558\uC790\uB294 \uCDE8\uC9C0\uC758
+        \uC9C0\uC2DC\uAC00 \uB0A8\uC544 \uC788\uC5C8\uB2E4."
       integrityDelta: -15
       exposureDelta: -2
       distortionPenalty: 0
     - id: p05_full_mask
-      label: "내부 메모 전체를 가린다"
+      label: "\uB0B4\uBD80 \uBA54\uBAA8 \uC804\uCCB4\uB97C \uAC00\uB9B0\uB2E4"
       actionType: 2
-      resultingText: "[내부 메모 단락 전체 비공개]"
+      resultingText: "[\uB0B4\uBD80 \uBA54\uBAA8 \uB2E8\uB77D \uC804\uCCB4 \uBE44\uACF5\uAC1C]"
       integrityDelta: -85
       exposureDelta: -5
       distortionPenalty: 0
     - id: p05_rewrite_preserve
-      label: "행정 판단으로 완화한다"
+      label: "\uD589\uC815 \uD310\uB2E8\uC73C\uB85C \uC644\uD654\uD55C\uB2E4"
       actionType: 3
-      resultingText: "감사팀 내부 검토에서는 발표 범위와 계좌 자료 공개 시점을 조정해야 한다는 의견이 제시되었다."
+      resultingText: "\uAC10\uC0AC\uD300 \uB0B4\uBD80 \uAC80\uD1A0\uC5D0\uC11C\uB294
+        \uBC1C\uD45C \uBC94\uC704\uC640 \uACC4\uC88C \uC790\uB8CC \uACF5\uAC1C \uC2DC\uC810\uC744
+        \uC870\uC815\uD574\uC57C \uD55C\uB2E4\uB294 \uC758\uACAC\uC774 \uC81C\uC2DC\uB418\uC5C8\uB2E4."
       integrityDelta: -30
       exposureDelta: -2
       distortionPenalty: 10
     - id: p05_rewrite_distort
-      label: "공개 권고로 뒤집는다"
+      label: "\uACF5\uAC1C \uAD8C\uACE0\uB85C \uB4A4\uC9D1\uB294\uB2E4"
       actionType: 4
-      resultingText: "감사팀 내부 검토에서는 계좌 자료를 가능한 한 조기에 공개해야 한다는 의견이 제시되었다."
+      resultingText: "\uAC10\uC0AC\uD300 \uB0B4\uBD80 \uAC80\uD1A0\uC5D0\uC11C\uB294
+        \uACC4\uC88C \uC790\uB8CC\uB97C \uAC00\uB2A5\uD55C \uD55C \uC870\uAE30\uC5D0
+        \uACF5\uAC1C\uD574\uC57C \uD55C\uB2E4\uB294 \uC758\uACAC\uC774 \uC81C\uC2DC\uB418\uC5C8\uB2E4."
       integrityDelta: -90
       exposureDelta: -1
       distortionPenalty: 50
   - id: p06_uncorroborated
-    title: "미확인 소문"
-    originalText: "현장 관계자 두 명은 낙찰 업체 대표가 고위 공직자의 대학 동문이라는 소문을 들었다고 말했지만, 문서 증거는 제출하지 못했다."
+    title: "\uBBF8\uD655\uC778 \uC18C\uBB38"
+    originalText: "\uD604\uC7A5 \uAD00\uACC4\uC790 \uB450 \uBA85\uC740 \uB099\uCC30
+      \uC5C5\uCCB4 \uB300\uD45C\uAC00 \uACE0\uC704 \uACF5\uC9C1\uC790\uC758 \uB300\uD559
+      \uB3D9\uBB38\uC774\uB77C\uB294 \uC18C\uBB38\uC744 \uB4E4\uC5C8\uB2E4\uACE0
+      \uB9D0\uD588\uC9C0\uB9CC, \uBB38\uC11C \uC99D\uAC70\uB294 \uC81C\uCD9C\uD558\uC9C0
+      \uBABB\uD588\uB2E4."
     informationValue: 2
     sensitivity: 3
-    tags:
-    - 4
-    - 5
+    tags: 0400000005000000
     editOptions:
     - id: p06_partial_mask
-      label: "개인 관계 정보를 가린다"
+      label: "\uAC1C\uC778 \uAD00\uACC4 \uC815\uBCF4\uB97C \uAC00\uB9B0\uB2E4"
       actionType: 1
-      resultingText: "현장 관계자 두 명은 낙찰 업체 대표와 고위 공직자 사이에 개인적 연결이 있다는 소문을 들었다고 말했지만, 문서 증거는 제출하지 못했다."
+      resultingText: "\uD604\uC7A5 \uAD00\uACC4\uC790 \uB450 \uBA85\uC740 \uB099\uCC30
+        \uC5C5\uCCB4 \uB300\uD45C\uC640 \uACE0\uC704 \uACF5\uC9C1\uC790 \uC0AC\uC774\uC5D0
+        \uAC1C\uC778\uC801 \uC5F0\uACB0\uC774 \uC788\uB2E4\uB294 \uC18C\uBB38\uC744
+        \uB4E4\uC5C8\uB2E4\uACE0 \uB9D0\uD588\uC9C0\uB9CC, \uBB38\uC11C \uC99D\uAC70\uB294
+        \uC81C\uCD9C\uD558\uC9C0 \uBABB\uD588\uB2E4."
       integrityDelta: -10
       exposureDelta: -1
       distortionPenalty: 0
     - id: p06_full_mask
-      label: "미확인 소문 전체를 가린다"
+      label: "\uBBF8\uD655\uC778 \uC18C\uBB38 \uC804\uCCB4\uB97C \uAC00\uB9B0\uB2E4"
       actionType: 2
-      resultingText: "[미확인 소문 단락 전체 비공개]"
+      resultingText: "[\uBBF8\uD655\uC778 \uC18C\uBB38 \uB2E8\uB77D \uC804\uCCB4
+        \uBE44\uACF5\uAC1C]"
       integrityDelta: -60
       exposureDelta: -3
       distortionPenalty: 0
     - id: p06_rewrite_preserve
-      label: "근거 부족을 강조한다"
+      label: "\uADFC\uAC70 \uBD80\uC871\uC744 \uAC15\uC870\uD55C\uB2E4"
       actionType: 3
-      resultingText: "일부 관계자는 개인적 연결 가능성을 언급했지만, 이를 뒷받침할 문서 증거는 확인되지 않았다."
+      resultingText: "\uC77C\uBD80 \uAD00\uACC4\uC790\uB294 \uAC1C\uC778\uC801 \uC5F0\uACB0
+        \uAC00\uB2A5\uC131\uC744 \uC5B8\uAE09\uD588\uC9C0\uB9CC, \uC774\uB97C \uB4B7\uBC1B\uCE68\uD560
+        \uBB38\uC11C \uC99D\uAC70\uB294 \uD655\uC778\uB418\uC9C0 \uC54A\uC558\uB2E4."
       integrityDelta: -10
       exposureDelta: -1
       distortionPenalty: 0
     - id: p06_rewrite_distort
-      label: "확정 사실처럼 고쳐 쓴다"
+      label: "\uD655\uC815 \uC0AC\uC2E4\uCC98\uB7FC \uACE0\uCCD0 \uC4F4\uB2E4"
       actionType: 4
-      resultingText: "낙찰 업체 대표와 고위 공직자의 개인적 연결은 사실로 확인되었다."
+      resultingText: "\uB099\uCC30 \uC5C5\uCCB4 \uB300\uD45C\uC640 \uACE0\uC704 \uACF5\uC9C1\uC790\uC758
+        \uAC1C\uC778\uC801 \uC5F0\uACB0\uC740 \uC0AC\uC2E4\uB85C \uD655\uC778\uB418\uC5C8\uB2E4."
       integrityDelta: -70
       exposureDelta: 1
       distortionPenalty: 45

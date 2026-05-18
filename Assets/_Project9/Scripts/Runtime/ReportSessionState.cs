@@ -8,6 +8,7 @@ namespace Project9.Runtime
     {
         private readonly Dictionary<string, ParagraphRuntimeState> _paragraphsById = new();
         private readonly Dictionary<string, ReputationState> _reputationsByTargetId = new();
+        private readonly HashSet<string> _submittedTargetIds = new();
         private readonly List<ParagraphRuntimeState> _paragraphs = new();
         private readonly List<ReputationState> _reputations = new();
 
@@ -23,6 +24,10 @@ namespace Project9.Runtime
 
         public ReportDefinition ReportDefinition { get; }
         public SubmitTargetDefinition SelectedSubmitTarget { get; private set; }
+        public bool HasSubmitted => _submittedTargetIds.Count > 0;
+        public bool AreAllTargetsSubmitted => _reputations.Count > 0 && _submittedTargetIds.Count >= _reputations.Count;
+        public int SubmittedTargetCount => _submittedTargetIds.Count;
+        public int SubmitTargetCount => _reputations.Count;
         public IReadOnlyList<ParagraphRuntimeState> Paragraphs => _paragraphs;
         public IReadOnlyList<ReputationState> Reputations => _reputations;
 
@@ -66,6 +71,21 @@ namespace Project9.Runtime
             return true;
         }
 
+        public bool HasSubmittedTarget(string targetId)
+        {
+            return !string.IsNullOrWhiteSpace(targetId) && _submittedTargetIds.Contains(targetId);
+        }
+
+        public bool MarkSubmitted(string targetId)
+        {
+            if (string.IsNullOrWhiteSpace(targetId) || !_reputationsByTargetId.ContainsKey(targetId))
+            {
+                return false;
+            }
+
+            return _submittedTargetIds.Add(targetId);
+        }
+
         public void ResetEdits()
         {
             foreach (var paragraph in _paragraphs)
@@ -76,6 +96,8 @@ namespace Project9.Runtime
 
         public void ResetReputations()
         {
+            _submittedTargetIds.Clear();
+
             foreach (var reputation in _reputations)
             {
                 reputation.Reset();

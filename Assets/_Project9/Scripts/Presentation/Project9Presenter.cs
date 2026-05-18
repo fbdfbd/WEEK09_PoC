@@ -14,6 +14,9 @@ namespace Project9.Presentation
         private readonly ReputationSystem _reputationSystem;
         private readonly Subject<ReportViewModel> _reportChanged = new();
         private readonly Subject<SubmissionResultViewModel> _submissionCompleted = new();
+        private readonly Subject<FinalResultViewModel> _finalResultCompleted = new();
+        private readonly Dictionary<string, SubmissionResultViewModel> _submissionsByTargetId = new();
+        private Project9ScenarioDefinition _scenario;
         private ReportSessionState _session;
 
         public Project9Presenter(
@@ -28,9 +31,11 @@ namespace Project9.Presentation
 
         public Observable<ReportViewModel> ReportChanged => _reportChanged;
         public Observable<SubmissionResultViewModel> SubmissionCompleted => _submissionCompleted;
+        public Observable<FinalResultViewModel> FinalResultCompleted => _finalResultCompleted;
         public ReportSessionState Session => _session;
         public ReportViewModel CurrentReport { get; private set; }
         public SubmissionResultViewModel LastSubmissionResult { get; private set; }
+        public FinalResultViewModel CurrentFinalResult { get; private set; }
 
         public void Initialize(Project9ScenarioDefinition scenario)
         {
@@ -39,7 +44,11 @@ namespace Project9.Presentation
                 throw new ArgumentNullException(nameof(scenario));
             }
 
+            _scenario = scenario;
             _session = _sessionFactory.Create(scenario.Report, scenario.SubmitTargets);
+            _submissionsByTargetId.Clear();
+            LastSubmissionResult = null;
+            CurrentFinalResult = null;
 
             if (scenario.SubmitTargets.Count > 0 && scenario.SubmitTargets[0] != null)
             {
@@ -47,6 +56,12 @@ namespace Project9.Presentation
             }
 
             PublishReport();
+        }
+
+        public void Restart()
+        {
+            EnsureInitialized();
+            Initialize(_scenario);
         }
 
         public bool SelectParagraphEditOption(string paragraphId, string editOptionId)
@@ -93,13 +108,29 @@ namespace Project9.Presentation
         {
             EnsureInitialized();
 
+            var selectedTargetId = _session.SelectedSubmitTarget?.Id;
+            if (_session.HasSubmittedTarget(selectedTargetId))
+            {
+                return _submissionsByTargetId.TryGetValue(selectedTargetId, out var previousResult)
+                    ? previousResult
+                    : LastSubmissionResult;
+            }
+
             var result = _scoringSystem.CalculateSelectedTarget(_session);
             _reputationSystem.ApplySubmissionResult(_session, result);
+            _session.MarkSubmitted(result.Target.Id);
 
             var viewModel = BuildSubmissionResultViewModel(result);
             LastSubmissionResult = viewModel;
+            _submissionsByTargetId[result.Target.Id] = viewModel;
             _submissionCompleted.OnNext(viewModel);
             PublishReport();
+
+            if (_session.AreAllTargetsSubmitted)
+            {
+                CurrentFinalResult = BuildFinalResultViewModel();
+                _finalResultCompleted.OnNext(CurrentFinalResult);
+            }
 
             return viewModel;
         }
@@ -108,8 +139,10 @@ namespace Project9.Presentation
         {
             _reportChanged.OnCompleted();
             _submissionCompleted.OnCompleted();
+            _finalResultCompleted.OnCompleted();
             _reportChanged.Dispose();
             _submissionCompleted.Dispose();
+            _finalResultCompleted.Dispose();
         }
 
         private void PublishReport()
@@ -144,15 +177,18 @@ namespace Project9.Presentation
                     target.DisplayName,
                     target.Description,
                     reputation.Value,
-                    string.Equals(_session.SelectedSubmitTarget?.Id, target.Id, StringComparison.Ordinal)));
+                    string.Equals(_session.SelectedSubmitTarget?.Id, target.Id, StringComparison.Ordinal),
+                    _session.HasSubmittedTarget(target.Id)));
             }
 
+            var selectedTargetId = _session.SelectedSubmitTarget?.Id;
             return new ReportViewModel(
                 _session.ReportDefinition.Title,
                 _session.ReportDefinition.Summary,
                 paragraphs,
                 targets,
-                _session.SelectedSubmitTarget?.Id);
+                selectedTargetId,
+                _session.HasSubmittedTarget(selectedTargetId));
         }
 
         private static SubmissionResultViewModel BuildSubmissionResultViewModel(SubmissionResult result)
@@ -178,6 +214,37 @@ namespace Project9.Presentation
                 result.TotalScore,
                 result.ReputationDelta,
                 paragraphScores);
+        }
+
+        private FinalResultViewModel BuildFinalResultViewModel()
+        {
+            var targetReputations = new List<FinalTargetReputationViewModel>();
+            var finalReputation = 0;
+            var maxReputation = 0;
+            var hasAnyTarget = false;
+
+            foreach (var reputation in _session.Reputations)
+            {
+                var target = reputation.TargetDefinition;
+                var value = reputation.Value;
+                targetReputations.Add(new FinalTargetReputationViewModel(
+                    target.Id,
+                    target.DisplayName,
+                    value));
+
+                finalReputation += value;
+
+                if (!hasAnyTarget || value > maxReputation)
+                {
+                    maxReputation = value;
+                    hasAnyTarget = true;
+                }
+            }
+
+            return new FinalResultViewModel(
+                finalReputation,
+                maxReputation,
+                targetReputations);
         }
 
         private void EnsureInitialized()
