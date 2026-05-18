@@ -12,3 +12,12 @@ public enum ActionType
     Block,              // 통제
     Modify              // 수정
 }
+
+public enum EntityKind
+{
+    Target,             // 육성대상
+    Location,           // 장소
+    Character,          // 인물
+    Education,          // 교육
+    Rumor               // 소문
+}
