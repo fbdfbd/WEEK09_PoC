@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public sealed class TooltipView : MonoBehaviour
@@ -29,12 +30,12 @@ public sealed class TooltipView : MonoBehaviour
         if (!_isShowing)
             return;
 
-        MoveTo(Input.mousePosition);
+        MoveTo(GetPointerScreenPosition());
     }
 
     public void Show(TooltipKey key)
     {
-        Show(key, Input.mousePosition);
+        Show(key, GetPointerScreenPosition());
     }
 
     public void Show(TooltipKey key, Vector2 pointerScreenPosition)
@@ -50,7 +51,7 @@ public sealed class TooltipView : MonoBehaviour
 
     public void ShowText(string tooltipText)
     {
-        ShowText(tooltipText, Input.mousePosition);
+        ShowText(tooltipText, GetPointerScreenPosition());
     }
 
     public void ShowText(string tooltipText, Vector2 pointerScreenPosition)
@@ -189,5 +190,12 @@ public sealed class TooltipView : MonoBehaviour
             correction.y = Screen.height - _screenPadding - max.y;
 
         return targetScreenPosition + correction;
+    }
+
+    private Vector2 GetPointerScreenPosition()
+    {
+        return Pointer.current != null
+            ? Pointer.current.position.ReadValue()
+            : _lastPointerScreenPosition;
     }
 }

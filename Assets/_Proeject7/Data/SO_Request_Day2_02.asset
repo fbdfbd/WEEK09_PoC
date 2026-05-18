@@ -17,12 +17,12 @@ MonoBehaviour:
   _isFollowUp: 0
   _parentRequestId: 
   _supplementFollowUpRequestId: req_d2_02_supplement
+  _deferredFollowUpRequestId: 
   _priority: 20
   _relatedAgencyId: test1
   _deadlineDays: 2
-  _title: 공공기관 열람·공개 신청서
-  _body: "담당관님께,\n저는 어느 역에서 있었던 대피 방송 사건 기록을 요청합니다.\n요청 기록 상세:\n최근 지하역 대피 방송 관련 상황 보고.\n방송 지시서, 승객 민원.\n시설 점검 기록, 당직자 보고, 회의 자료 일체.\n가능한 경우 전자 사본으로 제공해주십시오.\n조건에 걸린다면, 사고 개요라도 공개 요청합니다."
+  _title: "공공기관 열람·공개 신청서"
+  _body: "담당관님께,  \n저는 어느 역에서 있었던 대피 방송 사건 기록을 요청합니다.\n\n요청 기록 상세:  \n최근 지하역 대피 방송 관련 상황 보고.  \n방송 지시서, 승객 민원.  \n시설 점검 기록, 당직자 보고, 회의 자료 일체.\n\n가능한 경우 전자 사본으로 제공해주십시오.  \n조건에 걸린다면, 사고 개요라도 공개 요청합니다."
   _summary: "청구인: 주민5\n연락처: xx.05.505\n제출일자: 901. 05. 04"
   _tags: []
-  _factTags:
-  - 2
+  _factTags: []

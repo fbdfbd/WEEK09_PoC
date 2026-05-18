@@ -25,6 +25,7 @@ public sealed class RuntimeDataBuilder
             so.IsFollowUp,
             so.ParentRequestId,
             so.SupplementFollowUpRequestId,
+            so.DeferredFollowUpRequestId,
             so.Priority,
             so.RelatedAgencyId,
             so.DeadlineDays,

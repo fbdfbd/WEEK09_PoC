@@ -9,6 +9,7 @@ public class SO_Request : ScriptableObject
     [SerializeField] private bool _isFollowUp;
     [SerializeField] private string _parentRequestId;
     [SerializeField] private string _supplementFollowUpRequestId;
+    [SerializeField] private string _deferredFollowUpRequestId;
     [SerializeField] private int _priority;
     [SerializeField] private string _relatedAgencyId;
     [SerializeField] private int _deadlineDays = 2;
@@ -25,6 +26,7 @@ public class SO_Request : ScriptableObject
     public bool IsFollowUp => _isFollowUp;
     public string ParentRequestId => _parentRequestId;
     public string SupplementFollowUpRequestId => _supplementFollowUpRequestId;
+    public string DeferredFollowUpRequestId => _deferredFollowUpRequestId;
     public int Priority => _priority;
     public string RelatedAgencyId => _relatedAgencyId;
     public int DeadlineDays => _deadlineDays;

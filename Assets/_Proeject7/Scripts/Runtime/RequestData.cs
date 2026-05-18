@@ -7,6 +7,7 @@ public sealed class RequestData
     public bool IsFollowUp { get; }
     public string ParentRequestId { get; }
     public string SupplementFollowUpRequestId { get; }
+    public string DeferredFollowUpRequestId { get; }
     public int Priority { get; }
     public string RelatedAgencyId { get; }
     public int DeadlineDays { get; }
@@ -32,6 +33,7 @@ public sealed class RequestData
         bool isFollowUp,
         string parentRequestId,
         string supplementFollowUpRequestId,
+        string deferredFollowUpRequestId,
         int priority,
         string relatedAgencyId,
         int deadlineDays,
@@ -46,6 +48,7 @@ public sealed class RequestData
         IsFollowUp = isFollowUp;
         ParentRequestId = parentRequestId;
         SupplementFollowUpRequestId = supplementFollowUpRequestId;
+        DeferredFollowUpRequestId = deferredFollowUpRequestId;
         Priority = priority;
         RelatedAgencyId = relatedAgencyId;
         DeadlineDays = deadlineDays > 0 ? deadlineDays : 2;

@@ -17,11 +17,12 @@ MonoBehaviour:
   _isFollowUp: 1
   _parentRequestId: req_d1_03_supplement
   _supplementFollowUpRequestId: 
+  _deferredFollowUpRequestId: 
   _priority: 100
-  _relatedAgencyId: test2
+  _relatedAgencyId: test1
   _deadlineDays: 2
-  _title: 공공기관 열람·공개 신청서
-  _body: "담당관님께,\n저는 남문 도서관 독서 모임 감시 기록을 최종 보완하여 요청합니다.\n요청 기록 상세:\n900.11.03, 900.12.15, 901.02.20 독서 모임 기록.\n감시 명령서, 현장 보고서, 참석 확인표.\n제보 기록, 상급 부서 보고 문서, 후속 조치 결정 문서 일체.\n가능한 경우 전자 사본으로 제공해주십시오.\n조건에 걸린다면, 비공개 정보가 가려진 명령서라도 공개 요청합니다."
+  _title: "공공기관 열람·공개 신청서"
+  _body: "담당관님께,  \n저는 남문 도서관 독서회 감시 기록을 최종 보완하여 요청합니다.\n\n요청 기록 상세:  \n900.11.03, 900.12.15, 901.02.20 독서회 기록.  \n구 내무부 치안본부 문화검열과 감시 명령서.  \n현장 보고서, 참석 확인표, 제보 기록.  \n상급 부서 보고 문서, 후속 조치 결정 문서 일체.\n\n가능한 경우 전자 사본으로 제공해주십시오.  \n조건에 걸린다면, 비공개 정보가 가려진 감시 명령서라도 공개 요청합니다."
   _summary: "청구인: 주민3\n연락처: xx.03.303\n제출일자: 901. 04. 16"
   _tags: []
   _factTags:

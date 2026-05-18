@@ -17,12 +17,14 @@ MonoBehaviour:
   _isFollowUp: 0
   _parentRequestId: 
   _supplementFollowUpRequestId: 
+  _deferredFollowUpRequestId: 
   _priority: 20
-  _relatedAgencyId: test1
+  _relatedAgencyId: test2
   _deadlineDays: 2
-  _title: 공공기관 열람·공개 신청서
-  _body: "담당관님께,\n저는 보호 대상자 위치 추적 기록을 요청합니다.\n요청 기록 상세:\n901년 보호 대상자들의 이동 경로.\n거주지, 담당 감시관 보고서.\n개별 면담 기록, 신고자 신원, 가족 연락처 일체.\n가능한 경우 원본 사본으로 제공해주십시오.\n조건에 걸린다면, 특정 대상자 1명의 이동 경로라도 공개 요청합니다."
+  _title: "공공기관 열람·공개 신청서"
+  _body: "담당관님께,  \n저는 901년 보호 대상자 위치 추적 기록을 요청합니다.\n\n요청 기록 상세:  \n901년 보호 대상자들의 이동 경로.  \n거주지, 담당 감시관 보고서.  \n개별 면담 기록, 신고자 신원, 가족 연락처 일체.  \n군 보안국 보호관리과 내부 평가표 일체.\n\n가능한 경우 원본 사본으로 제공해주십시오.  \n조건에 걸린다면, 특정 대상자 1명의 이동 경로라도 공개 요청합니다."
   _summary: "청구인: 주민8\n연락처: xx.08.808\n제출일자: 901. 05. 10"
   _tags: []
   _factTags:
   - 0
+  - 1

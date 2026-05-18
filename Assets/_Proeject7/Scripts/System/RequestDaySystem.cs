@@ -61,11 +61,14 @@ public sealed class RequestDaySystem
 
         foreach (var record in _deferredRequestStore.GetRecordsForDay(day))
         {
-            var request = _requestStore.FindOrNull(record.RequestId);
+            var deferredRequest = _requestStore.FindOrNull(record.RequestId);
+            if (deferredRequest == null || _requestStore.IsResolved(deferredRequest.Id))
+                continue;
+
+            var request = GetDeferredDisplayRequest(deferredRequest);
             if (request == null || _requestStore.IsResolved(request.Id))
                 continue;
 
-            request.DecreaseRemainingDays();
             request.ResetForReview();
             deferredRequests.Add(request);
             _deferredRequestStore.MarkActivated(record);
@@ -76,6 +79,17 @@ public sealed class RequestDaySystem
             .ThenByDescending(request => request.Priority)
             .ThenBy(request => request.Id)
             .ToList();
+    }
+
+    private RequestData GetDeferredDisplayRequest(RequestData deferredRequest)
+    {
+        deferredRequest.DecreaseRemainingDays();
+
+        if (string.IsNullOrEmpty(deferredRequest.DeferredFollowUpRequestId))
+            return deferredRequest;
+
+        var followUp = _requestStore.FindOrNull(deferredRequest.DeferredFollowUpRequestId);
+        return followUp ?? deferredRequest;
     }
 
     private List<RequestData> BuildFollowUpRequests()
