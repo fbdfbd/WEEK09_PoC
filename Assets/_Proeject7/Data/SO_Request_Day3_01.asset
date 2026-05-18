@@ -18,7 +18,11 @@ MonoBehaviour:
   _parentRequestId: 
   _supplementFollowUpRequestId: 
   _priority: 30
+  _relatedAgencyId: test1
+  _deadlineDays: 2
   _title: 공공기관 열람·공개 신청서
   _body: "담당관님께,\n저는 하천 정화 예산 집행 기록을 요청합니다.\n요청 기록 상세:\n901.02.01~901.04.30 남천 하천 정화 사업 예산 배정서.\n계약서, 검수 보고서.\n업체별 지급 내역, 현장 사진 목록, 완료 보고서 일체.\n가능한 경우 전자 사본으로 제공해주십시오.\n조건에 걸린다면, 계좌 정보 제외 지급 내역이라도 공개 요청합니다."
   _summary: "청구인: 주민7\n연락처: xx.07.707\n제출일자: 901. 05. 10"
   _tags: []
+  _factTags:
+  - 2

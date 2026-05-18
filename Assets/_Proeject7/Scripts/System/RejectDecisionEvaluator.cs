@@ -37,4 +37,10 @@ public sealed class RejectDecisionEvaluator
             _ => false
         };
     }
+
+    public bool ShouldReject(RequestData request)
+    {
+        return CanReject(request, RejectReason.PersonalInformation)
+            || CanReject(request, RejectReason.NationalSecurity);
+    }
 }

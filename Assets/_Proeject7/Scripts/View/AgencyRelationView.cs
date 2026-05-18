@@ -33,6 +33,8 @@ public sealed class AgencyRelationBinding
 public sealed class AgencyRelationView : MonoBehaviour
 {
     [SerializeField] private AgencyRelationBinding[] _bindings;
+    [SerializeField] private TextMeshProUGUI _playerTrustText;
+    [SerializeField] private Slider _playerTrustSlider;
 
     public void SetAgencyRelation(AgencyData agency)
     {
@@ -45,6 +47,19 @@ public sealed class AgencyRelationView : MonoBehaviour
                 continue;
 
             binding.Set(agency.Name, agency.Relation);
+        }
+    }
+
+    public void SetPlayerTrust(int trust)
+    {
+        if (_playerTrustText != null)
+            _playerTrustText.text = trust.ToString();
+
+        if (_playerTrustSlider != null)
+        {
+            _playerTrustSlider.minValue = PlayerTrustStore.MinTrust;
+            _playerTrustSlider.maxValue = PlayerTrustStore.MaxTrust;
+            _playerTrustSlider.value = trust;
         }
     }
 }

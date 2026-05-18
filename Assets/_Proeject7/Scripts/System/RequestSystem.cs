@@ -7,6 +7,8 @@ public sealed class RequestSystem
     private readonly RequestHistory _history;
     private readonly DeferredRequestStore _deferredRequestStore;
     private readonly RejectDecisionEvaluator _rejectDecisionEvaluator;
+    private readonly RequestDecisionOutcomeEvaluator _decisionOutcomeEvaluator;
+    private readonly PlayerTrustStore _playerTrustStore;
     private readonly GameFlowState _flowState;
 
     public RequestSystem(
@@ -15,6 +17,8 @@ public sealed class RequestSystem
         RequestHistory history,
         DeferredRequestStore deferredRequestStore,
         RejectDecisionEvaluator rejectDecisionEvaluator,
+        RequestDecisionOutcomeEvaluator decisionOutcomeEvaluator,
+        PlayerTrustStore playerTrustStore,
         GameFlowState flowState)
     {
         _requestStore = requestStore;
@@ -22,6 +26,8 @@ public sealed class RequestSystem
         _history = history;
         _deferredRequestStore = deferredRequestStore;
         _rejectDecisionEvaluator = rejectDecisionEvaluator;
+        _decisionOutcomeEvaluator = decisionOutcomeEvaluator;
+        _playerTrustStore = playerTrustStore;
         _flowState = flowState;
     }
 
@@ -32,6 +38,7 @@ public sealed class RequestSystem
 
         request.SetStatus(status);
         _history.AddResult(requestId, status, _flowState.CurrentDay.Value);
+        ApplyDecisionOutcome(request, draft);
 
         if (status != RequestStatus.Deferred)
             _requestStore.MarkResolved(requestId);
@@ -57,6 +64,14 @@ public sealed class RequestSystem
                 ApplyRejectResult(request, draft);
                 break;
         }
+    }
+
+    private void ApplyDecisionOutcome(RequestData request, RequestDecisionDraft draft)
+    {
+        var outcome = _decisionOutcomeEvaluator.Evaluate(request, draft);
+
+        if (outcome.PlayerTrustDelta != 0)
+            _playerTrustStore.ChangeTrust(outcome.PlayerTrustDelta);
     }
 
     private void ApplyRejectResult(RequestData request, RequestDecisionDraft draft)

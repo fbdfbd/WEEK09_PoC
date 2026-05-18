@@ -18,7 +18,11 @@ MonoBehaviour:
   _parentRequestId: 
   _supplementFollowUpRequestId: 
   _priority: 10
+  _relatedAgencyId: test2
+  _deadlineDays: 2
   _title: 공공기관 열람·공개 신청서
   _body: "담당관님께,\n저는 북문 검문소 장비 교체 검토 기록을 요청합니다.\n요청 기록 상세:\n901.05.08 북문 검문소 장비 교체 구매 검토서.\n보안성 검토 메모, 예산 협의 기록.\n납품 후보 목록, 성능 평가표, 결재 대기 문서 일체.\n가능한 경우 전자 사본으로 제공해주십시오.\n조건에 걸린다면, 세부 사양 제외 예산 협의 기록이라도 공개 요청합니다."
   _summary: "청구인: 주민9\n연락처: xx.09.909\n제출일자: 901. 05. 10"
   _tags: []
+  _factTags:
+  - 1

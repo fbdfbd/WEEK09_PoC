@@ -18,7 +18,11 @@ MonoBehaviour:
   _parentRequestId: req_d1_02_supplement
   _supplementFollowUpRequestId: 
   _priority: 100
+  _relatedAgencyId: test2
+  _deadlineDays: 2
   _title: 공공기관 열람·공개 신청서
   _body: "담당관님께,\n저는 북부 통제선 7초소 소란 사건 기록을 최종 보완하여 요청합니다.\n요청 기록 상세:\n901.03.28 21시~23시 북부 통제선 7초소 앞 소란 신고.\n상황 보고서, 경계 근무 일지, 상황 전파 기록.\n상급 부서 지시 문서, 민원 접수 대장, 회신문 일체.\n가능한 경우 전자 사본으로 제공해주십시오.\n조건에 걸린다면, 경계 정보가 가려진 처리 기록이라도 공개 요청합니다."
   _summary: "청구인: 주민2\n연락처: xx.02.202\n제출일자: 901. 04. 16"
   _tags: []
+  _factTags:
+  - 1

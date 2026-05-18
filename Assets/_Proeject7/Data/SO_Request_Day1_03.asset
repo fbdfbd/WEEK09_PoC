@@ -18,7 +18,11 @@ MonoBehaviour:
   _parentRequestId: 
   _supplementFollowUpRequestId: req_d1_03_supplement
   _priority: 10
+  _relatedAgencyId: test2
+  _deadlineDays: 2
   _title: 공공기관 열람·공개 신청서
   _body: "담당관님께,\n저는 불온 독서 모임 감시 기록을 요청합니다.\n요청 기록 상세:\n900년부터 901년까지 독서 모임 참석자 명단.\n제보자 이름, 감시 명령서.\n참석자 주소, 조사관 메모, 내부 평가표 일체.\n가능한 경우 원본 사본으로 제공해주십시오.\n조건에 걸린다면, 명단 일부라도 공개 요청합니다."
   _summary: "청구인: 주민3\n연락처: xx.03.303\n제출일자: 901. 04. 14"
   _tags: []
+  _factTags:
+  - 0

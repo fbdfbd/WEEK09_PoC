@@ -47,7 +47,7 @@ public sealed class DayFlowPresenter : IStartable, IDisposable
         }
 
         _flowView.SetNextText(_textProvider.EndText);
-        _flowView.SetNextInteractable(false);
+        _flowView.SetNextInteractable(true);
     }
 
     private void HandleNextClicked()
@@ -56,7 +56,10 @@ public sealed class DayFlowPresenter : IStartable, IDisposable
             return;
 
         if (_flowState.CurrentDay.Value >= LastDay)
+        {
+            _flowState.CurrentPhase.Value = GamePhase.Ending;
             return;
+        }
 
         _requestDaySystem.StartDay(_flowState.CurrentDay.Value + 1);
     }

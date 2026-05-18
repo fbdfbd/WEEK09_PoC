@@ -5,6 +5,7 @@ public enum GamePhase
     ResponseReview,
     DisclosureDecision,
     Result,
+    Ending,
 }
 
 public enum RequestStatus

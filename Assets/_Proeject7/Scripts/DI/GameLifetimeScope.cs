@@ -13,6 +13,7 @@ public sealed class GameLifetimeScope : LifetimeScope
     [SerializeField] private HudView _hudView;
     [SerializeField] private IndexSelectorView _requestIndexSelectorView;
     [SerializeField] private AgencyRelationView _agencyRelationView;
+    [SerializeField] private EndingView _endingView;
 
     protected override void Configure(IContainerBuilder builder)
     {
@@ -26,10 +27,14 @@ public sealed class GameLifetimeScope : LifetimeScope
         if (_agencyRelationView != null)
             builder.RegisterInstance(_agencyRelationView);
 
+        if (_endingView != null)
+            builder.RegisterInstance(_endingView);
+
         builder.Register<GameFlowState>(Lifetime.Singleton);
 
         builder.Register<RequestStore>(Lifetime.Singleton);
         builder.Register<AgencyStore>(Lifetime.Singleton);
+        builder.Register<PlayerTrustStore>(Lifetime.Singleton);
         builder.Register<RequestHistory>(Lifetime.Singleton);
         builder.Register<DeferredRequestStore>(Lifetime.Singleton);
         builder.Register<RequestDecisionDraftStore>(Lifetime.Singleton);
@@ -41,6 +46,10 @@ public sealed class GameLifetimeScope : LifetimeScope
         builder.Register<RequestDaySystem>(Lifetime.Singleton);
         builder.Register<AgencyAssignmentSystem>(Lifetime.Singleton);
         builder.Register<RejectDecisionEvaluator>(Lifetime.Singleton);
+        builder.Register<RequestDecisionOutcomeEvaluator>(Lifetime.Singleton);
+        builder.Register<AgencyAssignmentOutcomeEvaluator>(Lifetime.Singleton);
+        builder.Register<EndingReportBuilder>(Lifetime.Singleton);
+        builder.Register<IGameSessionCommand, GameSessionCommand>(Lifetime.Singleton);
 
         builder.Register<PhaseTextProvider>(Lifetime.Singleton);
         builder.Register<RequestTextProvider>(Lifetime.Singleton);
@@ -53,6 +62,12 @@ public sealed class GameLifetimeScope : LifetimeScope
         builder.RegisterEntryPoint<HudPresenter>();
 
         if (_agencyRelationView != null)
+        {
             builder.RegisterEntryPoint<AgencyRelationPresenter>();
+            builder.RegisterEntryPoint<PlayerTrustPresenter>();
+        }
+
+        if (_endingView != null)
+            builder.RegisterEntryPoint<EndingPresenter>();
     }
 }
