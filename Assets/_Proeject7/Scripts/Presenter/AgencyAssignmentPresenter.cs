@@ -37,6 +37,8 @@ public sealed class AgencyAssignmentPresenter : IStartable, IDisposable
 
     public void Start()
     {
+        ConfigureAgencyTooltips();
+
         _view.OnAgencyClicked += HandleAgencyClicked;
         _flowView.OnNextClicked += HandleNextClicked;
 
@@ -64,6 +66,12 @@ public sealed class AgencyAssignmentPresenter : IStartable, IDisposable
             _view.SetInteractionTagShow(false);
             _view.SetAgencyTagShow(false);
         }
+    }
+
+    private void ConfigureAgencyTooltips()
+    {
+        foreach (var agency in _agencyStore.All)
+            _view.SetAgencyTooltipText(agency.Id, agency.TooltipText);
     }
 
     private void RefreshAgencyAssignmentView()

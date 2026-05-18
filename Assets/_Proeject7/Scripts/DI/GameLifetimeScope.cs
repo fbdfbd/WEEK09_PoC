@@ -14,6 +14,8 @@ public sealed class GameLifetimeScope : LifetimeScope
     [SerializeField] private IndexSelectorView _requestIndexSelectorView;
     [SerializeField] private AgencyRelationView _agencyRelationView;
     [SerializeField] private EndingView _endingView;
+    [SerializeField] private IntroView _introView;
+    [SerializeField] private SO_IntroSequence _introSequence;
 
     protected override void Configure(IContainerBuilder builder)
     {
@@ -29,6 +31,15 @@ public sealed class GameLifetimeScope : LifetimeScope
 
         if (_endingView != null)
             builder.RegisterInstance(_endingView);
+
+        var hasIntro = _introView != null && _introSequence != null;
+        builder.RegisterInstance(new IntroStartupState(hasIntro));
+
+        if (hasIntro)
+        {
+            builder.RegisterInstance(_introView);
+            builder.RegisterInstance(_introSequence);
+        }
 
         builder.Register<GameFlowState>(Lifetime.Singleton);
 
@@ -55,6 +66,10 @@ public sealed class GameLifetimeScope : LifetimeScope
         builder.Register<RequestTextProvider>(Lifetime.Singleton);
 
         builder.RegisterEntryPoint<Bootstrap>();
+
+        if (hasIntro)
+            builder.RegisterEntryPoint<IntroPresenter>();
+
         builder.RegisterEntryPoint<RequestListPresenter>();
         builder.RegisterEntryPoint<RequestPresenter>();
         builder.RegisterEntryPoint<AgencyAssignmentPresenter>();

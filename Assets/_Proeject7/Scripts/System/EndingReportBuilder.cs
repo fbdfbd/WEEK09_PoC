@@ -61,10 +61,10 @@ public sealed class EndingReportBuilder
     private static string ResolveTitle(int achievement, int worstRelation)
     {
         if (achievement < 35 || worstRelation <= 1)
-            return "직위 해제";
+            return "기록 말소";
 
         if (achievement >= 75 && worstRelation >= 4)
-            return "신뢰 확보";
+            return "비공식 제안";
 
         return "계속 근무";
     }
@@ -72,12 +72,12 @@ public sealed class EndingReportBuilder
     private static string ResolvePlayerOutcome(int achievement, int worstRelation)
     {
         if (achievement < 35 || worstRelation <= 1)
-            return "처리 결과에 대한 책임으로 자리에서 물러났습니다.";
+            return "당신은 관계기관 합동조사 이후 직무에서 배제되었습니다. 인사 기록에는 전보 처리로 남았지만, 모두가 당신도 전임자들과 같아졌다는 걸 압니다.";
 
         if (achievement >= 75 && worstRelation >= 4)
-            return "어려운 청구를 안정적으로 처리해 계속 일을 맡게 되었습니다.";
+            return "당신은 까다로운 청구들을 안정적으로 처리했습니다. 며칠 뒤 군 보안국 소속 장교가 찾아와, 더 중요한 기록을 다룰 자리를 제안합니다.";
 
-        return "큰 문제 없이 임기를 이어갑니다. 다만 몇몇 관계기관은 당신을 예의주시합니다.";
+        return "큰 문제 없이 임기를 이어갑니다. 다만 몇몇 기관들은 당신을 예의주시합니다.";
     }
 
     private string BuildAgencyRelationsText()

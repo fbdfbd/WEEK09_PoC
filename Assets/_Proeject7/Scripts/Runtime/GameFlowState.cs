@@ -5,7 +5,7 @@ using R3;
 public sealed class GameFlowState
 {
     public ReactiveProperty<GamePhase> CurrentPhase { get; }
-        = new(GamePhase.RequestReview);
+        = new(GamePhase.Intro);
 
     public ReactiveProperty<string?> SelectedRequestId { get; }
         = new(null);

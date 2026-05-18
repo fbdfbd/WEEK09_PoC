@@ -7,6 +7,7 @@ public sealed class AgencyData
 
     public string Id { get; }
     public string Name { get; }
+    public string TooltipText { get; }
 
     public int Relation { get; private set; }
 
@@ -20,10 +21,12 @@ public sealed class AgencyData
         string id,
         string name,
         int initialRelation,
+        string tooltipText,
         IEnumerable<string> staticTags)
     {
         Id = id;
         Name = name;
+        TooltipText = tooltipText;
         Relation = ClampRelation(initialRelation);
         _staticTags = new HashSet<string>(staticTags);
     }

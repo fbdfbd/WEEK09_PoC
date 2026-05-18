@@ -9,6 +9,7 @@ public sealed class Bootstrap : IStartable
     private readonly AgencyStore _agencyStore;
     private readonly RequestDaySystem _requestDaySystem;
     private readonly GameFlowState _flowState;
+    private readonly IntroStartupState _introStartupState;
 
     public Bootstrap(
         SO_PoCDatabase database,
@@ -16,7 +17,8 @@ public sealed class Bootstrap : IStartable
         RequestStore requestStore,
         AgencyStore agencyStore,
         RequestDaySystem requestDaySystem,
-        GameFlowState flowState)
+        GameFlowState flowState,
+        IntroStartupState introStartupState)
     {
         _database = database;
         _builder = builder;
@@ -24,6 +26,7 @@ public sealed class Bootstrap : IStartable
         _agencyStore = agencyStore;
         _requestDaySystem = requestDaySystem;
         _flowState = flowState;
+        _introStartupState = introStartupState;
     }
 
     public void Start()
@@ -32,7 +35,9 @@ public sealed class Bootstrap : IStartable
 
         _requestStore.Initialize(runtimeData.Requests);
         _agencyStore.Initialize(runtimeData.Agencies);
-        _requestDaySystem.StartDay(_flowState.CurrentDay.Value);
+
+        if (!_introStartupState.HasIntro)
+            _requestDaySystem.StartDay(_flowState.CurrentDay.Value);
 
         Debug.Log($"Bootstrap complete / Requests: {runtimeData.Requests.Count}, Agencies: {runtimeData.Agencies.Count}");
         Debug.Log($"SelectedRequestId: {_flowState.SelectedRequestId.Value}");

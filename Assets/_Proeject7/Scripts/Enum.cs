@@ -1,5 +1,6 @@
 public enum GamePhase
 {
+    Intro,
     RequestReview,
     AgencyAssignment,
     ResponseReview,

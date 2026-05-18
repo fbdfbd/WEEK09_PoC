@@ -42,6 +42,7 @@ public sealed class RuntimeDataBuilder
             so.Id,
             so.Name,
             so.DefaultRelation,
+            so.TooltipText,
             so.Tags
         );
     }

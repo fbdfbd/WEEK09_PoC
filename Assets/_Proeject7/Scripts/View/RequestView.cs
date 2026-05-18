@@ -13,6 +13,16 @@ public sealed class RejectReasonButtonBinding
     public Button Button => _button;
 }
 
+[Serializable]
+public sealed class AgencyButtonBinding
+{
+    [SerializeField] private string _agencyId;
+    [SerializeField] private Button _button;
+
+    public string AgencyId => _agencyId;
+    public Button Button => _button;
+}
+
 public sealed class RequestView : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI _titleText;
@@ -33,6 +43,7 @@ public sealed class RequestView : MonoBehaviour
     [SerializeField] private Button _internalOrderMinistryButton;
     [SerializeField] private Button _militarySecurityDirectorateButton;
     [SerializeField] private Button _healthAuthorityButton;
+    [SerializeField] private AgencyButtonBinding[] _agencyButtons;
 
     [SerializeField] private GameObject _interationOptionTag;
     [SerializeField] private GameObject _agencyAssignmentTag;
@@ -49,6 +60,8 @@ public sealed class RequestView : MonoBehaviour
 
     private void Awake()
     {
+        ConfigureDecisionTooltips();
+
         _receivedButton.onClick.AddListener(() => OnReceivedClicked?.Invoke());
         _correctionRequiredButton.onClick.AddListener(() => OnCorrectionRequiredClicked?.Invoke());
         _pendingButton.onClick.AddListener(() => OnPendingClicked?.Invoke());
@@ -66,9 +79,16 @@ public sealed class RequestView : MonoBehaviour
             }
         }
 
-        _internalOrderMinistryButton.onClick.AddListener(() => OnAgencyClicked?.Invoke("test1"));
-        _militarySecurityDirectorateButton.onClick.AddListener(() => OnAgencyClicked?.Invoke("test2"));
-        _healthAuthorityButton.onClick.AddListener(() => OnAgencyClicked?.Invoke("test3"));
+        ConfigureAgencyButtons();
+    }
+
+    public void SetAgencyTooltipText(string agencyId, string text)
+    {
+        var button = GetAgencyButton(agencyId);
+        if (button == null)
+            return;
+
+        EnsureTooltipTrigger(button).SetOverrideText(text);
     }
 
     public void SetRequest(string title, string body, string summary)
@@ -131,5 +151,97 @@ public sealed class RequestView : MonoBehaviour
     public void SetInteractionTagShow(bool value)
     {
         _interationOptionTag.SetActive(value);
+    }
+
+    private void ConfigureDecisionTooltips()
+    {
+        SetButtonTooltipKey(_receivedButton, TooltipKey.AcceptRequest);
+        SetButtonTooltipKey(_correctionRequiredButton, TooltipKey.SupplementRequired);
+        SetButtonTooltipKey(_pendingButton, TooltipKey.DeferRequest);
+        SetButtonTooltipKey(_rejectedButton, TooltipKey.RejectRequest);
+
+        if (_rejectReasonButtons == null)
+            return;
+
+        foreach (var binding in _rejectReasonButtons)
+        {
+            if (binding?.Button == null)
+                continue;
+
+            SetButtonTooltipKey(binding.Button, GetRejectReasonTooltipKey(binding.Reason));
+        }
+    }
+
+    private Button GetAgencyButton(string agencyId)
+    {
+        if (_agencyButtons != null)
+        {
+            foreach (var binding in _agencyButtons)
+            {
+                if (binding?.Button == null || binding.AgencyId != agencyId)
+                    continue;
+
+                return binding.Button;
+            }
+        }
+
+        return agencyId switch
+        {
+            "test1" => _internalOrderMinistryButton,
+            "test2" => _militarySecurityDirectorateButton,
+            "test3" => _healthAuthorityButton,
+            _ => null
+        };
+    }
+
+    private void ConfigureAgencyButtons()
+    {
+        var hasAgencyBindings = _agencyButtons != null && _agencyButtons.Length > 0;
+
+        if (hasAgencyBindings)
+        {
+            foreach (var binding in _agencyButtons)
+            {
+                if (binding?.Button == null || string.IsNullOrEmpty(binding.AgencyId))
+                    continue;
+
+                var agencyId = binding.AgencyId;
+                binding.Button.onClick.AddListener(() => OnAgencyClicked?.Invoke(agencyId));
+            }
+
+            return;
+        }
+
+        _internalOrderMinistryButton.onClick.AddListener(() => OnAgencyClicked?.Invoke("test1"));
+        _militarySecurityDirectorateButton.onClick.AddListener(() => OnAgencyClicked?.Invoke("test2"));
+        _healthAuthorityButton.onClick.AddListener(() => OnAgencyClicked?.Invoke("test3"));
+    }
+
+    private static TooltipTrigger EnsureTooltipTrigger(Button button)
+    {
+        if (button == null)
+            return null;
+
+        if (!button.TryGetComponent<TooltipTrigger>(out var trigger))
+            trigger = button.gameObject.AddComponent<TooltipTrigger>();
+
+        return trigger;
+    }
+
+    private static void SetButtonTooltipKey(Button button, TooltipKey key)
+    {
+        var trigger = EnsureTooltipTrigger(button);
+        if (trigger != null)
+            trigger.SetKey(key);
+    }
+
+    private static TooltipKey GetRejectReasonTooltipKey(RejectReason reason)
+    {
+        return reason switch
+        {
+            RejectReason.PersonalInformation => TooltipKey.RejectPersonalInformation,
+            RejectReason.NationalSecurity => TooltipKey.RejectNationalSecurity,
+            _ => TooltipKey.None
+        };
     }
 }
